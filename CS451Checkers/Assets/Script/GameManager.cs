@@ -31,6 +31,10 @@ public class GameManager : MonoBehaviour {
 
             // Create Client on host
             Client c = Instantiate(clientPrefab).GetComponent<Client>();
+
+            // Hosting Player is Player 1
+            c.clientName = "Player 1";
+
             c.ConnectToServer("127.0.0.1", 1234);
         }
         catch(Exception e)
@@ -52,6 +56,9 @@ public class GameManager : MonoBehaviour {
         {
 
             Client c = Instantiate(clientPrefab).GetComponent<Client>();
+
+            // Joining Player is Player 2
+            c.clientName = "Player 2";
             c.ConnectToServer(hostAddress, 1234);
         }
         catch(Exception e)
@@ -62,7 +69,19 @@ public class GameManager : MonoBehaviour {
 
     public void BackButton()
     {
+        Server s = FindObjectOfType<Server>();
 
+        if (s != null)
+            Destroy(s.gameObject);
+
+        Client c = FindObjectOfType<Client>();
+
+        if (c != null)
+        {
+            Debug.Log("Destroying Client: " + c.clientName);
+            Destroy(c.gameObject);
+        }
+           
     }
 	
 }

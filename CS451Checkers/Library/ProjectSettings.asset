@@ -634,9 +634,9 @@ PlayerSettings:
     UNet: 1
   facebookSdkVersion: 7.9.4
   apiCompatibilityLevel: 2
-  cloudProjectId: 8bd901f9-09f6-4206-9fd4-45b01fa806a8
-  projectName: CS451Checkers (2)
-  organizationId: reechik-bhattacharya
+  cloudProjectId: 877b6bcd-fb0b-4b8c-b390-c4c158d061c6
+  projectName: CS451Checkers (1)
+  organizationId: kevchen21
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0

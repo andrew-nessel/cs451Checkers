@@ -7,11 +7,18 @@ using UnityEngine;
 
 public class Client : MonoBehaviour
 {
+    public string clientName;
+
     private bool socketReady;
     private TcpClient socket;
     private NetworkStream stream;
     private StreamWriter writer;
     private StreamReader reader;
+
+    private void Start()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
 
     public bool ConnectToServer(string host, int port)
     {
@@ -63,6 +70,18 @@ public class Client : MonoBehaviour
     // Read messages from the server
     private void OnIncomingData(string data)
     {
+        string[] aData = data.Split('|');
+        switch(aData[0])
+        {
+            case "SWHO":
+                for(int i = 1; i < aData.Length - 1; i++)
+                {
+                    
+                }
+                break;
+        }
+
+
         Debug.Log(data);
     }
 

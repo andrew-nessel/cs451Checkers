@@ -30,14 +30,14 @@ public class Server : MonoBehaviour
             server.Start();
 
             serverStarted = true;
-            StartListening();
-            
+            StartListening();    
         }
         catch (Exception e)
         {
             Debug.Log("Socket error: " + e.Message);
         }
     }
+
     private void Update()
     {
         if (!serverStarted)
@@ -81,7 +81,14 @@ public class Server : MonoBehaviour
 
     private void AcceptTcpClient(IAsyncResult ar)
     {
+        Debug.Log("Accepting Client...");
         TcpListener listener = (TcpListener)ar.AsyncState;
+
+         string allUsers = "";
+        foreach(ServerClient sclient in clients)
+        {
+            allUsers += sclient.clientName + '|';
+        }
 
         ServerClient sc = new ServerClient(listener.EndAcceptTcpClient(ar));
         clients.Add(sc);
@@ -89,6 +96,11 @@ public class Server : MonoBehaviour
         StartListening();
 
         Debug.Log("Somebody Connected");
+
+
+       
+
+        Broadcast("SWHO|" + allUsers, clients[clients.Count - 1]);
     }
 
     private bool IsConnected(TcpClient c)
@@ -129,11 +141,21 @@ public class Server : MonoBehaviour
         }
     }
 
+    private void Broadcast(string data, ServerClient c)
+    {
+
+        List<ServerClient> sc = new List<ServerClient> { c };
+        Broadcast(data, sc);
+    }
+
     // Server read
     private void OnIncomingData(ServerClient c, string data)
     {
         Debug.Log(c.clientName + " : " + data);
     }
+
+
+
 }
 
 
