@@ -8,18 +8,32 @@ using UnityEngine;
 public class Client : MonoBehaviour
 {
     public string clientName;
+    public bool isHost;
 
+    // Keep track if the socket is ready
     private bool socketReady;
+
+    // Objects for connection and data 
     private TcpClient socket;
     private NetworkStream stream;
     private StreamWriter writer;
     private StreamReader reader;
+
+    // Keep track of players connected
+    // Server will broadcast a response to each client connected when a new
+    // player connects
+    private List<GameClient> players = new List<GameClient>(); 
 
     private void Start()
     {
         DontDestroyOnLoad(gameObject);
     }
 
+    /*
+     * Try to connect to the server
+     * Sets networking objects
+     * Returns true if new connection is established, false otherwise
+     */
     public bool ConnectToServer(string host, int port)
     {
         // Don't do anything if already connected
@@ -73,16 +87,35 @@ public class Client : MonoBehaviour
         string[] aData = data.Split('|');
         switch(aData[0])
         {
-            case "SWHO":
+            // Player connected; add to local client players list
+            case "S:Connection":
                 for(int i = 1; i < aData.Length - 1; i++)
                 {
-                    
+                    UserConnected(aData[i], false);
                 }
+
+                // Send to the server a message that this player joined 
+                Send("C:Player|" + clientName + "|" + ((isHost) ? "(Host)" : "(Guest)")); 
+                break;
+            case "SCNN":
+                UserConnected(aData[1], false);
                 break;
         }
 
-
         Debug.Log(data);
+    }
+
+    private void UserConnected(string pname, bool host)
+    {
+        GameClient c = new GameClient()
+        {
+            name = pname
+        };
+
+        players.Add(c);
+
+        if (players.Count == 2)
+            GameManager.Instance.StartGame();
     }
 
     private void OnApplicationQuit()

@@ -17,16 +17,31 @@ public class Server : MonoBehaviour
     private bool serverStarted;
 
     // Called when creating server
-    public void Init()
+    public void Init(string ip)
     {
         DontDestroyOnLoad(gameObject);
         clients = new List<ServerClient>();
         disconnectList = new List<ServerClient>();
 
+
+        
+
         try
         {
-            // Accept any IP Address as long as the port matches
-            server = new TcpListener(IPAddress.Any, port);
+            IPAddress ipAddress;
+            if (IPAddress.TryParse(ip, out ipAddress))
+            {
+                Debug.Log("!");
+                server = new TcpListener(ipAddress, port);
+            }
+            else
+            {
+                Debug.Log("@");
+                // Failsafe: Accept any IP Address as long as the port matches
+                server = new TcpListener(IPAddress.Any, port);
+            }
+
+
             server.Start();
 
             serverStarted = true;
@@ -81,10 +96,9 @@ public class Server : MonoBehaviour
 
     private void AcceptTcpClient(IAsyncResult ar)
     {
-        Debug.Log("Accepting Client...");
         TcpListener listener = (TcpListener)ar.AsyncState;
 
-         string allUsers = "";
+        string allUsers = "";
         foreach(ServerClient sclient in clients)
         {
             allUsers += sclient.clientName + '|';
@@ -93,14 +107,10 @@ public class Server : MonoBehaviour
         ServerClient sc = new ServerClient(listener.EndAcceptTcpClient(ar));
         clients.Add(sc);
 
-        StartListening();
-
-        Debug.Log("Somebody Connected");
-
-
-       
-
-        Broadcast("SWHO|" + allUsers, clients[clients.Count - 1]);
+        if(clients.Count < 2)
+            StartListening();
+      
+        Broadcast("S:Connection|" + allUsers, clients[clients.Count - 1]);
     }
 
     private bool IsConnected(TcpClient c)
@@ -119,6 +129,7 @@ public class Server : MonoBehaviour
         }
         catch (Exception e)
         {
+            Debug.Log(e.Message);
             return false;
         }
     }
@@ -136,14 +147,13 @@ public class Server : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.Log("Write error : " + e.Message);
+                Debug.Log(e.Message);
             }
         }
     }
 
     private void Broadcast(string data, ServerClient c)
     {
-
         List<ServerClient> sc = new List<ServerClient> { c };
         Broadcast(data, sc);
     }
@@ -151,11 +161,17 @@ public class Server : MonoBehaviour
     // Server read
     private void OnIncomingData(ServerClient c, string data)
     {
-        Debug.Log(c.clientName + " : " + data);
+        Debug.Log(data);
+        string[] aData = data.Split('|');
+        switch (aData[0])
+        {
+            case "C:Player":
+                c.clientName = aData[1];
+                c.isHost = (aData[2] == "(Host)");
+                Broadcast("SCNN|" + c.clientName + " " + c.isHost, clients);
+                break;
+        }
     }
-
-
-
 }
 
 
@@ -164,6 +180,7 @@ public class ServerClient
 {
     public string clientName;
     public TcpClient tcp;
+    public bool isHost; 
 
     public ServerClient(TcpClient tcp)
     {

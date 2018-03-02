@@ -8,3 +8,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scene/Menu.unity
     guid: bb9f7970fbf0647c68c94277c7db697c
+  - enabled: 1
+    path: Assets/Scene/boardTest.unity
+    guid: 2b7a35fbc35b11d4a8a2b31572d332b9
