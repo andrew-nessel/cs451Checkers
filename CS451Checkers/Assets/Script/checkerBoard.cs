@@ -92,6 +92,8 @@ public class checkerBoard : MonoBehaviour {
         Debug.Log(endDrag.x+" "+endDrag.y);
         selectedPiece = pieces[x1, y1];
         MovePiece(selectedPiece, x2, y2);
+        pieces[x1, y1] = null;
+        pieces[x2, y2] = selectedPiece;
     }
 
     private void generateBoard()
@@ -151,6 +153,7 @@ public class checkerBoard : MonoBehaviour {
      private void MovePiece(GameObject p, int x, int y)
     {
         p.transform.position = new Vector3(x * 10 + 5, 0.2f, y * 10 + 5);
+
     }
    
 }
