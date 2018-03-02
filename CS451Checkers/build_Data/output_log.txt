@@ -1,0 +1,141 @@
+Initialize engine version: 5.6.3p1 (9c92e827232b)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: NVIDIA GeForce GT 630M (ID=0xde9)
+    Vendor:   NVIDIA
+    VRAM:     979 MB
+    Driver:   23.21.13.8873
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\Andrew\Documents\repo\cs451Checkers\CS451Checkers\build_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\Andrew\Documents\repo\cs451Checkers\CS451Checkers\build_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\Andrew\Documents\repo\cs451Checkers\CS451Checkers\build_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\Andrew\Documents\repo\cs451Checkers\CS451Checkers\build_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\Andrew\Documents\repo\cs451Checkers\CS451Checkers\build_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\Andrew\Documents\repo\cs451Checkers\CS451Checkers\build_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\Andrew\Documents\repo\cs451Checkers\CS451Checkers\build_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\Andrew\Documents\repo\cs451Checkers\CS451Checkers\build_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: C:\Users\Andrew\Documents\repo\cs451Checkers\CS451Checkers\build_Data\Managed\UnityEngine.Analytics.dll (this message is harmless)
+Loading C:\Users\Andrew\Documents\repo\cs451Checkers\CS451Checkers\build_Data\Managed\UnityEngine.Analytics.dll into Unity Child Domain
+Platform assembly: C:\Users\Andrew\Documents\repo\cs451Checkers\CS451Checkers\build_Data\Managed\TextMeshPro-2017.3-1.0.56-Runtime.dll (this message is harmless)
+Loading C:\Users\Andrew\Documents\repo\cs451Checkers\CS451Checkers\build_Data\Managed\TextMeshPro-2017.3-1.0.56-Runtime.dll into Unity Child Domain
+- Completed reload, in  0.245 seconds
+Platform assembly: C:\Users\Andrew\Documents\repo\cs451Checkers\CS451Checkers\build_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\Andrew\Documents\repo\cs451Checkers\CS451Checkers\build_Data\Managed\System.dll (this message is harmless)
+desktop: 1366x768 60Hz; virtual: 1366x768 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+<RI> Initialized touch support.
+UnloadTime: 1.283347 ms
+Setting up 4 worker threads for Enlighten.
+  Thread -> id: 2b18 -> priority: 1 
+  Thread -> id: 1f38 -> priority: 1 
+  Thread -> id: 1c48 -> priority: 1 
+  Thread -> id: 3584 -> priority: 1 
+S:Connection|Player 1|
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+SCNN|Player 2 False
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 2.678251 ms
+
+Unloading 13 unused Assets to reduce memory usage. Loaded Objects now: 373.
+Total: 0.372152 ms (FindLiveObjects: 0.033913 ms CreateObjectMapping: 0.049977 ms MarkObjects: 0.263719 ms  DeleteObjects: 0.023650 ms)
+
+3 2
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+whitePiece(Clone)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+2 2
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+1 4
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+whitePiece(Clone)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+3 2
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+2 1
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+whitePiece(Clone)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+1 4
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+-1 -1
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+IndexOutOfRangeException: Array index is out of range.
+  at checkerBoard.TryMove (Int32 x1, Int32 y1, Int32 x2, Int32 y2) [0x00000] in <filename unknown>:0 
+  at checkerBoard.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+-1 -1
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at checkerBoard.MovePiece (UnityEngine.GameObject p, Int32 x, Int32 y) [0x00000] in <filename unknown>:0 
+  at checkerBoard.TryMove (Int32 x1, Int32 y1, Int32 x2, Int32 y2) [0x00000] in <filename unknown>:0 
+  at checkerBoard.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+whitePiece(Clone)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+2 1
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+1 2
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+whitePiece(Clone)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+1 2
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+2 3
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+whitePiece(Clone)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+2 3
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+2 1
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
