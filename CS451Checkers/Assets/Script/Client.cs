@@ -22,7 +22,7 @@ public class Client : MonoBehaviour
     // Keep track of players connected
     // Server will broadcast a response to each client connected when a new
     // player connects
-    private List<GameClient> players = new List<GameClient>(); 
+    private List<GameClient> players = new List<GameClient>();
 
     private void Start()
     {
@@ -59,9 +59,9 @@ public class Client : MonoBehaviour
 
     private void Update()
     {
-        if(socketReady)
+        if (socketReady)
         {
-            if(stream.DataAvailable)
+            if (stream.DataAvailable)
             {
                 string data = reader.ReadLine();
                 if (data != null)
@@ -74,7 +74,7 @@ public class Client : MonoBehaviour
     // Send messages to the server
     public void Send(string data)
     {
-        if(!socketReady)
+        if (!socketReady)
             return;
 
         writer.WriteLine(data);
@@ -84,21 +84,25 @@ public class Client : MonoBehaviour
     // Read messages from the server
     private void OnIncomingData(string data)
     {
+        Debug.Log(data);
         string[] aData = data.Split('|');
-        switch(aData[0])
+        switch (aData[0])
         {
             // Player connected; add to local client players list
             case "S:Connection":
-                for(int i = 1; i < aData.Length - 1; i++)
+                for (int i = 1; i < aData.Length - 1; i++)
                 {
                     UserConnected(aData[i], false);
                 }
 
                 // Send to the server a message that this player joined 
-                Send("C:Player|" + clientName + "|" + ((isHost) ? "(Host)" : "(Guest)")); 
+                Send("C:Player|" + clientName + "|" + ((isHost) ? "(Host)" : "(Guest)"));
                 break;
             case "SCNN":
                 UserConnected(aData[1], false);
+                break;
+            case "S:Move":
+                checkerBoard.Instance.UpdateAfterOpponentMove(int.Parse(aData[1]), int.Parse(aData[2]), int.Parse(aData[3]));
                 break;
         }
 

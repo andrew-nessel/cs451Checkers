@@ -23,9 +23,6 @@ public class Server : MonoBehaviour
         clients = new List<ServerClient>();
         disconnectList = new List<ServerClient>();
 
-
-        
-
         try
         {
             IPAddress ipAddress;
@@ -45,7 +42,7 @@ public class Server : MonoBehaviour
             server.Start();
 
             serverStarted = true;
-            StartListening();    
+            StartListening();
         }
         catch (Exception e)
         {
@@ -99,7 +96,7 @@ public class Server : MonoBehaviour
         TcpListener listener = (TcpListener)ar.AsyncState;
 
         string allUsers = "";
-        foreach(ServerClient sclient in clients)
+        foreach (ServerClient sclient in clients)
         {
             allUsers += sclient.clientName + '|';
         }
@@ -107,9 +104,9 @@ public class Server : MonoBehaviour
         ServerClient sc = new ServerClient(listener.EndAcceptTcpClient(ar));
         clients.Add(sc);
 
-        if(clients.Count < 2)
+        if (clients.Count < 2)
             StartListening();
-      
+
         Broadcast("S:Connection|" + allUsers, clients[clients.Count - 1]);
     }
 
@@ -170,6 +167,12 @@ public class Server : MonoBehaviour
                 c.isHost = (aData[2] == "(Host)");
                 Broadcast("SCNN|" + c.clientName + " " + c.isHost, clients);
                 break;
+            case "C:Move":
+                // aData[1] contains the Player Name of the player who made the move
+                // Broadcast the message only to the player who didn't make the move, so that the same move isn't
+                // repeated by the initial player
+                Broadcast("S:Move|" + aData[2] + "|" + aData[3] + "|" + aData[4] + "|Client Receieved", clients.Find(cl => cl.clientName != aData[1]));
+                break;
         }
     }
 }
@@ -180,7 +183,7 @@ public class ServerClient
 {
     public string clientName;
     public TcpClient tcp;
-    public bool isHost; 
+    public bool isHost;
 
     public ServerClient(TcpClient tcp)
     {

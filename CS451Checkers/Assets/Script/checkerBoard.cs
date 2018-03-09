@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class checkerBoard : MonoBehaviour {
 
+    public static checkerBoard Instance { get; set; }
+
     // Use this for initialization
     public GameObject whitePiece;
     public GameObject blackPiece;
@@ -17,14 +19,17 @@ public class checkerBoard : MonoBehaviour {
     private Vector2 startDrag;
     private Vector2 endDrag;
 
+    private Client client;
 
     void Start () {
         gameLogic = GetComponent<GameLogic>();
         generateBoard();
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        Instance = this;
+        client = FindObjectOfType<Client>();
+    }
+
+    // Update is called once per frame
+    void Update () {
         UpdateMouseOver();
        
         
@@ -93,6 +98,31 @@ public class checkerBoard : MonoBehaviour {
         Debug.Log(endDrag.x+" "+endDrag.y);
         Piece spiece = gameLogic.getPiece(selectedPiece);
         Move move = new Move(spiece, x2, y2);
+        if (gameLogic.validMove(move))
+        {
+            gameLogic.makeMove(move);
+
+            string msg = "C:Move|" + client.clientName + "|";
+            msg += spiece.getID() + "|";
+            msg += endDrag.x.ToString() + "|";
+            msg += endDrag.y.ToString();
+            msg += "|Server Receieved";
+
+            client.Send(msg);
+        }
+    }
+
+
+
+    /* 
+    * Essentially the same as TryMove, but called to synchronize the board.
+    * Moves a piece without sending a message to the server, since this function
+    * is called when receiving a message from the server.
+    */
+    public void UpdateAfterOpponentMove(int pieceId, int x, int y)
+    {
+        Piece spiece = gameLogic.getPiece(pieceId);
+        Move move = new Move(spiece, x, y);
         if (gameLogic.validMove(move))
         {
             gameLogic.makeMove(move);
