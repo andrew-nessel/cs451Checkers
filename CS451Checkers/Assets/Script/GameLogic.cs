@@ -2,131 +2,254 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour {
+public class GameLogic : MonoBehaviour {
+    
+    private Piece[][] myBoard;
+    private Piece[] pieceList;
+    public checkerBoard checkBoard;
 
-
-    public class GameLogic
+    private void initBoard()
     {
-        protected Piece[][] myBoard;
 
+        checkBoard = GetComponent<checkerBoard>();
+        myBoard = new Piece[8][];
+        pieceList = new Piece[24];
 
-        void initBoard()
+        for (int x = 0; x < 8; x++)
         {
-            myBoard = new Piece[8][];
+            myBoard[x] = new Piece[8];
+        }
 
-            for (int x = 0; x < 8; x++)
+
+        //add white pieces
+        int z = 0;
+        for (int y = 0; y < 3; y++)
+        {
+            if (y % 2 == 0)
             {
-                myBoard[x] = new Piece[8];
-            }
-
-
-            //add black pieces
-            int z = 0;
-            for (int y = 0; y < 3; y++)
-            {
-                int x = 0;
-                while (x < 8)
+                for (int x = 0; x < 8; x += 2)
                 {
-                    if (y % 2 == 0)
-                    {
-                        myBoard[y][x] = new Piece(z, y, x + 1, false);
-                        x += 2;
-                    }
-                    else
-                    {
-                        myBoard[y][x] = new Piece(z, y, x, false);
-                        x += 2;
-                    }
+                    pieceList[z] = new Piece(z, y, x, false);
+                    myBoard[x][y] = pieceList[z];
                     z++;
                 }
-            }
 
-            //add white peices
-            for (int y = 5; y < 8; y++)
+            }
+            else
             {
-                int x = 0;
-                while (x < 8)
+                for (int x = 1; x < 8; x += 2)
                 {
-                    if (y % 2 == 0)
-                    {
-                        myBoard[y][x] = new Piece(z, y, x + 1, true);
-                        x += 2;
-                    }
-                    else
-                    {
-                        myBoard[y][x] = new Piece(z, y, x, true);
-                        x += 2;
-                    }
+                    pieceList[z] = new Piece(z, y, x, false);
+                    myBoard[x][y] = pieceList[z];
                     z++;
                 }
             }
         }
 
-        bool validMove(Piece piece, int x, int y)
+        //generate black pieces
+        for (int y = 7; y > 4; y--)
         {
-            int oldx = piece.getX();
-            int oldy = piece.getY();
-
-            //check if its a king, otherwise
-            //check its moving foward
-
-            if (!piece.isKing())
+            if (y % 2 == 0)
             {
-                if (piece.isWhite() && y > oldy)
+                for (int x = 0; x < 8; x += 2)
                 {
-                    return false;
+                    pieceList[z] = new Piece(z, y, x, true);
+                    myBoard[x][y] = pieceList[z];
+                    z++;
                 }
-                else if ((!piece.isWhite()) && y < oldy)
+
+            }
+            else
+            {
+                for (int x = 1; x < 8; x += 2)
                 {
-                    return false;
+                    pieceList[z] = new Piece(z, y, x, true);
+                    myBoard[x][y] = pieceList[z];
+                    z++;
                 }
             }
+        }
+    }
 
-            int xdiff = oldx - x;
-            int ydiff = oldy - y;
-            //check if the movement is diagonal
-            if (xdiff != ydiff)
+    public Piece selectPiece(int x, int y)
+    {
+        if (x < 0 || x >= 8 || y < 0 || y >= 8)
+           return null;
+
+        return myBoard[x][y];
+    }
+
+    public bool validMove(Piece piece, int x, int y)
+    {
+        if(piece == null)
+        {
+            Debug.Log("We got a null piece in valid");
+        }
+
+        int oldx = piece.getX();
+        int oldy = piece.getY();
+
+        //check if its a king, otherwise
+        //check its moving foward
+
+        if (!piece.isKing())
+        {
+            if (piece.isWhite() && y > oldy)
             {
                 return false;
             }
-
-            //check if the movement is more than one space that there is a piece to capture in between NOT DONE
-
-            return false;
-        }
-
-        bool makeMove(Piece piece, int x, int y)
-        {
-            //if(!validMove(piece, x, y)){
-            //return false;
-            //}
-
-            //if there are peices in between new and old capture peices NOT DONE
-
-            //if need be king the piece
-            if (y == 7)
+            else if ((!piece.isWhite()) && y < oldy)
             {
-                piece.kingMe();
+                return false;
             }
-
-
-            //update x and y
-            piece.updateX(x);
-            piece.updateY(y);
-
+        }
+                    
+        int xdiff = Mathf.Abs(oldx - x);
+        int ydiff = Mathf.Abs(oldy - y);
+        //check if the movement is diagonal
+        if (xdiff != ydiff)
+        {
             return false;
         }
 
-        public Piece[][] getBoard()
+        /*
+        int xchange, ychange;
+        if (oldx - x < 0)
         {
-            return myBoard;
+            xchange = -1;
         }
+        else if(oldx - x > 0)
+        {
+            xchange = 1;
+        }
+        else
+        {
+            xchange = 0;
+        }
+
+        if (oldy - y < 0)
+        {
+            ychange = -1;
+        }
+        else if (oldy - y > 0)
+        {
+            ychange = 1;
+        } else
+        {
+            if (!piece.isKing())
+            {
+                return false;
+            }
+            else
+            {
+                ychange = 0;
+            }
+        }
+        */
+
+        while (ydiff > 1 || xdiff > 1)
+        {
+            if (myBoard[x + xchange][y + ychange] == null || myBoard[x + xchange][y + ychange].isWhite() == piece.isWhite())
+            {
+                return false;
+            }
+            ydiff += (-2);
+            xdiff += (-2);
+        }
+
+        //check if the movement is more than one space that there is a piece to capture in between NOT DONE
+
+        return true;
+    }
+
+    public bool makeMove(Piece piece, int x, int y)
+    {
+        if(!validMove(piece, x, y)){
+            return false;
+        }
+
+        int oldx = piece.getX();
+        int oldy = piece.getY();
+        int xdiff = Mathf.Abs(oldx - x);
+        int ydiff = Mathf.Abs(oldy - y);
+
+        int xchange, ychange;
+        //if there are peices in between new and old capture peices NOT DONE
+        /*
+        if (oldx - x < 0)
+        {
+            xchange = -1;
+        }
+        else if (oldx - x > 0)
+        {
+            xchange = 1;
+        }
+        else
+        {
+            xchange = 0;
+        }
+
+        if (oldy - y < 0)
+        {
+            ychange = -1;
+        }
+        else if (oldy - y > 0)
+        {
+            ychange = 1;
+        }
+        else
+        {
+            ychange = 0;
+        }
+
+        while (ydiff > 1 || xdiff > 1)
+        {
+            if (myBoard[x + xchange][y + ychange] != null)
+            {
+                myBoard[x + xchange][y + ychange].capture();
+            }
+            ydiff += (-2);
+            xdiff += (-2);
+        }
+        */
+
+        //if need be king the piece
+        if (y == 7)
+        {
+            piece.kingMe();
+        }
+
+
+        //update x and y
+        piece.updateX(x);
+        piece.updateY(y);
+
+        checkBoard.updateBoard(pieceList);
+
+        return false;
+    }
+
+    public Piece[][] getBoard()
+    {
+        return myBoard;
+    }
+
+    public Piece getPiece(int ID)
+    {
+        if(ID > 23 || ID < 0)
+        {
+            return null;
+        }
+
+        Debug.Log("We got number " + ID + " and that is piece " + pieceList[ID].getID());
+
+        return pieceList[ID];
     }
 
     // Use this for initialization
     void Start()
     {
-
+        initBoard();
     }
 
     // Update is called once per frame

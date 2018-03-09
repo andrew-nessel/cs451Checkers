@@ -2,19 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Piece : MonoBehaviour {
+public class Piece {
 
     protected int ID;
     protected bool white;
     protected bool king;
     protected int x;
     protected int y;
+    protected bool captured;
 
     public Piece(int ID, int y, int x, bool isWhite)
     {
         this.ID = ID;
         this.white = isWhite;
         this.king = false;
+        this.captured = false;
         this.x = x;
         this.y = y;
     }
@@ -57,6 +59,16 @@ public class Piece : MonoBehaviour {
     public void kingMe()
     {
         king = true;
+    }
+
+    public bool isCaptured()
+    {
+        return captured;
+    }
+
+    public void capture()
+    {
+        captured = true;
     }
 
 

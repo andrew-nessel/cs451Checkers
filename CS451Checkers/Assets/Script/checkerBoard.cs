@@ -7,11 +7,11 @@ using UnityEngine.SceneManagement;
 public class checkerBoard : MonoBehaviour {
 
     // Use this for initialization
-    public GameObject[,] pieces = new GameObject[8, 8];
     public GameObject whitePiece;
     public GameObject blackPiece;
-    private Vector3 piecePos;
-    private GameObject selectedPiece;
+    private int selectedPiece;
+    public GameObject[] pieces = new GameObject[24];
+    private GameLogic gameLogic;
 
     private Vector2 mouseOver;
     private Vector2 startDrag;
@@ -19,6 +19,7 @@ public class checkerBoard : MonoBehaviour {
 
 
     void Start () {
+        gameLogic = GetComponent<GameLogic>();
         generateBoard();
 	}
 	
@@ -70,34 +71,57 @@ public class checkerBoard : MonoBehaviour {
 
     private void SelectPiece(int x, int y)
     {
-        if (x < 0 || x >= 8 || y < 0 || y >= 8)
-            return;
+        
+        Piece pi = gameLogic.selectPiece(x, y);
+        //Debug.Log(gameLogic.getBoard()[0][0].getID());
 
-        //piece p = pieces[x, y];
-        GameObject p = pieces[x, y];
-        if (p != null)
+        if (pi != null)
         {
-            selectedPiece = p;
+            selectedPiece = pi.getID();
             startDrag = mouseOver;
-            Debug.Log(selectedPiece.name);
+            Debug.Log(selectedPiece);
         }
        
         
     }
+
     private void TryMove(int x1, int y1, int x2, int y2)
     {
         // Multiplayer Support
         startDrag = new Vector2(x1, y1);
         endDrag = new Vector2(x2, y2);
         Debug.Log(endDrag.x+" "+endDrag.y);
-        selectedPiece = pieces[x1, y1];
-        MovePiece(selectedPiece, x2, y2);
-        pieces[x1, y1] = null;
-        pieces[x2, y2] = selectedPiece;
+        Piece spiece = gameLogic.getPiece(selectedPiece);
+        if (gameLogic.validMove(spiece, x2, y2))
+        {
+            gameLogic.makeMove(spiece, x2, y2);
+        }
+    }
+
+    public void updateBoard(Piece[] newPieces)
+    {
+        foreach (Piece newpiece in newPieces)
+        {
+            GameObject go = pieces[newpiece.getID()];
+            if (!newpiece.isCaptured())
+            {
+                int newX = newpiece.getX();
+                int newY = newpiece.getY();
+                MovePiece(go, newX, newY);
+            }
+            else
+            {
+                MovePiece(go, 12, 12);
+            }
+        }
     }
 
     private void generateBoard()
     {
+
+        Vector3 piecePos;
+        int z = 0;
+
         // generate white pieces
         for (int y = 0; y < 3; y++)
         {
@@ -106,7 +130,8 @@ public class checkerBoard : MonoBehaviour {
                 for (int x = 0; x < 8; x += 2)
                 {
                     piecePos = new Vector3(x * 10 + 5, 0.2f, y * 10 + 5);
-                    generatePiece(x, y);
+                    generatePiece(z, piecePos);
+                    z++;
                 }
 
             }
@@ -115,7 +140,8 @@ public class checkerBoard : MonoBehaviour {
                 for (int x = 1; x < 8; x += 2)
                 {
                     piecePos = new Vector3(x * 10 + 5, 0.2f, y * 10 + 5);
-                    generatePiece(x, y);
+                    generatePiece(z, piecePos);
+                    z++;
                 }
             }
         }
@@ -128,7 +154,8 @@ public class checkerBoard : MonoBehaviour {
                 for (int x = 0; x < 8; x += 2)
                 {
                     piecePos = new Vector3(x * 10 + 5, 0.2f, y * 10 + 5);
-                    generatePiece(x, y);
+                    generatePiece(z, piecePos);
+                    z++;
                 }
 
             }
@@ -137,19 +164,20 @@ public class checkerBoard : MonoBehaviour {
                 for (int x = 1; x < 8; x += 2)
                 {
                     piecePos = new Vector3(x * 10 + 5, 0.2f, y * 10 + 5);
-                    generatePiece(x, y);
+                    generatePiece(z, piecePos);
+                    z++;
                 }
             }
         }
     }
 
-    private void generatePiece(int x,int y)
+    private void generatePiece(int ID, Vector3 piecePos)
     {
-        bool isPieceWhite = (y > 3) ? false : true;
+        bool isPieceWhite = (ID > 11) ? false : true;
         GameObject go = Instantiate((isPieceWhite) ? whitePiece : blackPiece, piecePos, transform.rotation);
-        //piece p = go.GetComponent<piece>();
-        pieces[x, y] = go;
+        pieces[ID] = go;
     }
+
      private void MovePiece(GameObject p, int x, int y)
     {
         p.transform.position = new Vector3(x * 10 + 5, 0.2f, y * 10 + 5);

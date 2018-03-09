@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44824475, g: 0.49827188, b: 0.5755814, a: 1}
+  m_IndirectSpecularColor: {r: 0.44824535, g: 0.49827206, b: 0.5755818, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -191,6 +191,7 @@ GameObject:
   - component: {fileID: 1376735642}
   - component: {fileID: 1376735646}
   - component: {fileID: 1376735647}
+  - component: {fileID: 1376735648}
   m_Layer: 8
   m_Name: board
   m_TagString: Untagged
@@ -279,6 +280,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   whitePiece: {fileID: 1030010244615322, guid: e6fc36561eeec4943ba9bb199f9a43ca, type: 2}
   blackPiece: {fileID: 1185841007980998, guid: 1ce31a002a031bf4781870d0ee9c1930, type: 2}
+  pieces:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!65 &1376735647
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -291,6 +317,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 10, y: 1, z: 10}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1376735648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1376735641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02ff4aa162b7adc49ac87f998ddf571b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  checkBoard: {fileID: 0}
 --- !u!1 &1461060454
 GameObject:
   m_ObjectHideFlags: 0
