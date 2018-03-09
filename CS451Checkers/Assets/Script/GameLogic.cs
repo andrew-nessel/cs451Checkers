@@ -112,8 +112,15 @@ public class GameLogic : MonoBehaviour {
             return false;
         }
 
-        /*
+        if(myBoard[x][y] != null)
+        {
+            return false;
+        }
+
+        
         int xchange, ychange;
+
+        /*
         if (oldx - x < 0)
         {
             xchange = -1;
@@ -145,7 +152,7 @@ public class GameLogic : MonoBehaviour {
                 ychange = 0;
             }
         }
-        */
+        
 
         while (ydiff > 1 || xdiff > 1)
         {
@@ -156,7 +163,8 @@ public class GameLogic : MonoBehaviour {
             ydiff += (-2);
             xdiff += (-2);
         }
-
+        */
+        
         //check if the movement is more than one space that there is a piece to capture in between NOT DONE
 
         return true;
@@ -214,7 +222,7 @@ public class GameLogic : MonoBehaviour {
         */
 
         //if need be king the piece
-        if (y == 7)
+        if (y == 7 || y == 0)
         {
             piece.kingMe();
         }
@@ -223,6 +231,9 @@ public class GameLogic : MonoBehaviour {
         //update x and y
         piece.updateX(x);
         piece.updateY(y);
+
+        myBoard[x][y] = piece;
+        myBoard[oldx][oldy] = null;
 
         checkBoard.updateBoard(pieceList);
 
@@ -244,6 +255,43 @@ public class GameLogic : MonoBehaviour {
         Debug.Log("We got number " + ID + " and that is piece " + pieceList[ID].getID());
 
         return pieceList[ID];
+    }
+
+    public void checkWin()
+    {
+
+        bool blackWin = true;
+        bool whiteWin = true;
+
+        foreach (Piece piece in pieceList)
+        {
+            if (!piece.isCaptured())
+            {
+                if (piece.isWhite())
+                {
+                    blackWin = false;
+                }
+                else
+                {
+                    whiteWin = false;
+                }
+            }
+        }
+
+        if (blackWin && whiteWin)
+        {
+            Debug.Log("Both players win, something went wrong..."); //do something
+        }
+
+        if (blackWin)
+        {
+            Debug.Log("Black Wins"); //do something
+        }
+
+        if (whiteWin)
+        {
+            Debug.Log("White Wins"); //do something
+        }
     }
 
     // Use this for initialization
