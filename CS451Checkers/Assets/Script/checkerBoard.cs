@@ -92,9 +92,10 @@ public class checkerBoard : MonoBehaviour {
         endDrag = new Vector2(x2, y2);
         Debug.Log(endDrag.x+" "+endDrag.y);
         Piece spiece = gameLogic.getPiece(selectedPiece);
-        if (gameLogic.validMove(spiece, x2, y2))
+        Move move = new Move(spiece, x2, y2);
+        if (gameLogic.validMove(move))
         {
-            gameLogic.makeMove(spiece, x2, y2);
+            gameLogic.makeMove(move);
         }
     }
 

@@ -79,9 +79,14 @@ public class GameLogic : MonoBehaviour {
         return myBoard[x][y];
     }
 
-    public bool validMove(Piece piece, int x, int y)
+    public bool validMove(Move move)
     {
-        if(piece == null)
+
+        Piece piece = move.getPiece();
+        int x = move.getX();
+        int y = move.getY();
+
+        if (piece == null)
         {
             Debug.Log("We got a null piece in valid");
         }
@@ -103,7 +108,12 @@ public class GameLogic : MonoBehaviour {
                 return false;
             }
         }
-                    
+
+        if(myBoard[x][y] != null)
+        {
+            return false;
+        }
+
         int xdiff = Mathf.Abs(oldx - x);
         int ydiff = Mathf.Abs(oldy - y);
         //check if the movement is diagonal
@@ -112,67 +122,27 @@ public class GameLogic : MonoBehaviour {
             return false;
         }
 
-        if(myBoard[x][y] != null)
-        {
-            return false;
-        }
-
-        
-        int xchange, ychange;
-
+        //check if the movement is more than one space that there is a piece to capture in between NOT DONE
         /*
-        if (oldx - x < 0)
+        if (xdiff > 1 || ydiff > 1)
         {
-            xchange = -1;
-        }
-        else if(oldx - x > 0)
-        {
-            xchange = 1;
-        }
-        else
-        {
-            xchange = 0;
-        }
-
-        if (oldy - y < 0)
-        {
-            ychange = -1;
-        }
-        else if (oldy - y > 0)
-        {
-            ychange = 1;
-        } else
-        {
-            if (!piece.isKing())
+            if (!canJump(move))
             {
                 return false;
             }
-            else
-            {
-                ychange = 0;
-            }
-        }
-        
-
-        while (ydiff > 1 || xdiff > 1)
-        {
-            if (myBoard[x + xchange][y + ychange] == null || myBoard[x + xchange][y + ychange].isWhite() == piece.isWhite())
-            {
-                return false;
-            }
-            ydiff += (-2);
-            xdiff += (-2);
         }
         */
-        
-        //check if the movement is more than one space that there is a piece to capture in between NOT DONE
 
         return true;
     }
 
-    public bool makeMove(Piece piece, int x, int y)
+    public bool makeMove(Move move)
     {
-        if(!validMove(piece, x, y)){
+        Piece piece = move.getPiece();
+        int x = move.getX();
+        int y = move.getY();
+
+        if(!validMove(move)){
             return false;
         }
 
@@ -181,45 +151,12 @@ public class GameLogic : MonoBehaviour {
         int xdiff = Mathf.Abs(oldx - x);
         int ydiff = Mathf.Abs(oldy - y);
 
-        int xchange, ychange;
-        //if there are peices in between new and old capture peices NOT DONE
-        /*
-        if (oldx - x < 0)
+        if (xdiff > 2 || ydiff > 2)
         {
-            xchange = -1;
-        }
-        else if (oldx - x > 0)
-        {
-            xchange = 1;
-        }
-        else
-        {
-            xchange = 0;
+            Move[] jumpMoves = getJumpMoves(move);
+            //finish working with jump moves to capture pieces
         }
 
-        if (oldy - y < 0)
-        {
-            ychange = -1;
-        }
-        else if (oldy - y > 0)
-        {
-            ychange = 1;
-        }
-        else
-        {
-            ychange = 0;
-        }
-
-        while (ydiff > 1 || xdiff > 1)
-        {
-            if (myBoard[x + xchange][y + ychange] != null)
-            {
-                myBoard[x + xchange][y + ychange].capture();
-            }
-            ydiff += (-2);
-            xdiff += (-2);
-        }
-        */
 
         //if need be king the piece
         if (y == 7 || y == 0)
@@ -293,6 +230,23 @@ public class GameLogic : MonoBehaviour {
             Debug.Log("White Wins"); //do something
         }
     }
+
+    public bool canJump(Move move) //not finished
+    {
+        return false;
+    }
+
+    public bool canJumpNext(Move move) //not finished
+    {
+        return false;
+    }
+
+    public Move[] getJumpMoves(Move move) //not finished
+    {
+        return null;
+    }
+
+
 
     // Use this for initialization
     void Start()
