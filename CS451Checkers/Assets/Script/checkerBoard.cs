@@ -11,6 +11,8 @@ public class checkerBoard : MonoBehaviour {
     // Use this for initialization
     public GameObject whitePiece;
     public GameObject blackPiece;
+    public GameObject whiteKing;
+    public GameObject blackKing;
     private int selectedPiece;
     public GameObject[] pieces = new GameObject[24];
     private GameLogic gameLogic;
@@ -143,6 +145,29 @@ public class checkerBoard : MonoBehaviour {
             else
             {
                 MovePiece(go, 12, 12);
+            }
+            if ((newpiece.isKing() == true) && ((go.name != "whiteKing(Clone)") || (go.name != "blackKing(Clone)")))
+            {
+                if (newpiece.isWhite() == true)
+                {
+                    MovePiece(go, 12, 12);
+                    int newX = newpiece.getX();
+                    int newY = newpiece.getY();
+                    go = Instantiate(whiteKing, (new Vector3(newX * 10 + 5, 0.2f, newY * 10 + 5)), transform.rotation);
+                    pieces[newpiece.getID()] = go;
+                    Debug.Log(go.GetType());
+
+                    //MovePiece(go, newX, newY);
+
+                }
+                if (newpiece.isWhite() == false)
+                {
+                    MovePiece(go, 12, 12);
+                    int newX = newpiece.getX();
+                    int newY = newpiece.getY();
+                    go = Instantiate(blackKing, (new Vector3(newX * 10 + 5, 0.2f, newY * 10 + 5)), transform.rotation);
+                    pieces[newpiece.getID()] = go;
+                }
             }
         }
     }
