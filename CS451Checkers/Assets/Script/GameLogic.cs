@@ -7,6 +7,7 @@ public class GameLogic : MonoBehaviour {
     private Piece[][] myBoard;
     private Piece[] pieceList;
     public checkerBoard checkBoard;
+    public bool waitForJump;
 
     private void initBoard()
     {
@@ -14,6 +15,7 @@ public class GameLogic : MonoBehaviour {
         checkBoard = GetComponent<checkerBoard>();
         myBoard = new Piece[8][];
         pieceList = new Piece[24];
+        waitForJump = false;
 
         for (int x = 0; x < 8; x++)
         {
@@ -129,7 +131,14 @@ public class GameLogic : MonoBehaviour {
         
         if (xdiff > 1 || ydiff > 1)
         {
-            if (!canJump(move))
+            if (!canJumpNext(move))
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (waitForJump)
             {
                 return false;
             }
@@ -159,16 +168,14 @@ public class GameLogic : MonoBehaviour {
 
         if (xdiff > 1 || ydiff > 1)
         {
-            Debug.Log("trying to remove pieces");
-            ArrayList jumpMoves = getJumpMoves(move);
-
-            foreach (Move jmove in jumpMoves)
+            if (canJumpNext(move))
             {
-                int x1 = jmove.getStartX();
-                int y1 = jmove.getStartY();
+                Debug.Log("trying to remove pieces");
+                int x1 = move.getStartX();
+                int y1 = move.getStartY();
 
-                int x3 = jmove.getMoveX();
-                int y3 = jmove.getMoveY();
+                int x3 = move.getMoveX();
+                int y3 = move.getMoveY();
 
                 int x2, y2;
 
@@ -205,9 +212,39 @@ public class GameLogic : MonoBehaviour {
                     myBoard[x2][y2] = null;
                     Debug.Log("removing x:" + x2 + " y:" + y2 + " pieceID:" + pieceID);
                 }
+
+                //update x and y
+                piece.updateX(x);
+                piece.updateY(y);
+
+                myBoard[x][y] = piece;
+                myBoard[oldx][oldy] = null;
+
+                if (canJump(piece))
+                {
+                    checkBoard.updateBoard(pieceList);
+                    waitForJump = true;
+                    return true;
+                }
+
+                else
+                {
+                    //if need be king the piece
+                    if (y == 7 || y == 0)
+                    {
+                        piece.kingMe();
+                    }
+
+                    waitForJump = false;
+                    checkBoard.updateBoard(pieceList);
+                    checkBoard.changeTurn();
+                    checkWin();
+
+                    return true;
+                }
+
             }
         }
-
 
         //if need be king the piece
         if (y == 7 || y == 0)
@@ -215,6 +252,7 @@ public class GameLogic : MonoBehaviour {
             piece.kingMe();
         }
 
+        waitForJump = false;
 
         //update x and y
         piece.updateX(x);
@@ -284,13 +322,39 @@ public class GameLogic : MonoBehaviour {
         }
     }
 
-    public bool canJump(Move move) //not finished
+    public bool canJump(Piece piece) //not finished
     {
-        ArrayList jumpList = getJumpMoves(move);
+        int x1 = piece.getX();
+        int y1 = piece.getY();
 
-        if (jumpList != null && jumpList.Count > 0)
+        if (piece.isKing() || piece.isWhite())
         {
-            return true;
+
+            if (canJumpNext(new Move(piece, x1, y1, x1 + 2, y1 + 2)))
+            {
+                return true;
+            }
+
+            if (canJumpNext(new Move(piece, x1, y1, x1 - 2, y1 + 2)))
+            {
+                return true;
+            }
+
+        }
+
+        if (piece.isKing() || (!piece.isWhite()))
+        {
+
+            if (canJumpNext(new Move(piece, x1, y1, x1 - 2, y1 - 2)))
+            {
+                return true;
+            }
+
+            if (canJumpNext(new Move(piece, x1, y1, x1 + 2, y1 - 2)))
+            {
+                return true;
+            }
+
         }
 
         return false;
@@ -366,131 +430,11 @@ public class GameLogic : MonoBehaviour {
         return false;
     }
 
-
-    public ArrayList getJumpMoves(Move move) //not finished
+    public bool waitingForJump()
     {
-        ArrayList moveList = new ArrayList();
-        
-        Piece piece = move.getPiece();
-        int x1 = move.getStartX();
-        int y1 = move.getStartY();
-
-        int x3 = move.getMoveX();
-        int y3 = move.getMoveY();
-
-        if (piece.isKing() || piece.isWhite())
-        {
-
-            if (canJumpNext(new Move(piece, x1, y1, x1 + 2, y1 + 2))) {
-                Move nextMove = new Move(piece, x1, y1, x1 + 2, y1 + 2);
-
-                if ((x3 == nextMove.getMoveX()) && (y3 == nextMove.getMoveY()))
-                {
-                    moveList.Add(nextMove);
-                    return moveList;
-                }
-                else
-                {
-                    ArrayList jumpList = getJumpMoves(new Move(piece, x1 + 2, y1 + 2, x3, y3));
-
-                    if (jumpList != null && jumpList.Count > 0)
-                    {
-                        moveList.Add(nextMove);
-                        foreach (Move jMove in jumpList)
-                        {
-                            moveList.Add(jMove);
-                        }
-                        return moveList;
-                    }
-                }
-
-            }
-
-            if (canJumpNext(new Move(piece, x1, y1, x1 - 2, y1 + 2)))
-            {
-                Move nextMove = new Move(piece, x1, y1, x1 - 2, y1 + 2);
-
-                if ((x3 == nextMove.getMoveX()) && (y3 == nextMove.getMoveY()))
-                {
-                    moveList.Add(nextMove);
-                    return moveList;
-                }
-                else
-                {
-                    ArrayList jumpList = getJumpMoves(new Move(piece, x1 - 2, y1 + 2, x3, y3));
-
-                    if (jumpList != null && jumpList.Count > 0)
-                    {
-                        moveList.Add(nextMove);
-                        foreach (Move jMove in jumpList)
-                        {
-                            moveList.Add(jMove);
-                        }
-                        return moveList;
-                    }
-                }
-            }
-
-        }
-
-        if (piece.isKing() || (!piece.isWhite()))
-        {
-
-            if (canJumpNext(new Move(piece, x1, y1, x1 - 2, y1 - 2)))
-            {
-                Move nextMove = new Move(piece, x1, y1, x1 - 2, y1 - 2);
-
-                if ((x3 == nextMove.getMoveX()) && (y3 == nextMove.getMoveY()))
-                {
-                    moveList.Add(nextMove);
-                    return moveList;
-                }
-                else
-                {
-                    ArrayList jumpList = getJumpMoves(new Move(piece, x1 - 2, y1 - 2, x3, y3));
-
-                    if (jumpList != null && jumpList.Count > 0)
-                    {
-                        moveList.Add(nextMove);
-                        foreach (Move jMove in jumpList)
-                        {
-                            moveList.Add(jMove);
-                        }
-                        return moveList;
-                    }
-                }
-            }
-
-            if (canJumpNext(new Move(piece, x1, y1, x1 + 2, y1 - 2)))
-            {
-                Move nextMove = new Move(piece, x1, y1, x1 + 2, y1 - 2);
-
-                if ((x3 == nextMove.getMoveX()) && (y3 == nextMove.getMoveY()))
-                {
-                    moveList.Add(nextMove);
-                    return moveList;
-                }
-                else
-                {
-                    ArrayList jumpList = getJumpMoves(new Move(piece, x1 + 2, y1 - 2, x3, y3));
-
-                    if (jumpList != null && jumpList.Count > 0)
-                    {
-                        moveList.Add(nextMove);
-                        foreach (Move jMove in jumpList)
-                        {
-                            moveList.Add(jMove);
-                        }
-                        return moveList;
-                    }
-                }
-            }
-
-        }
-
-        return null;
+        return waitForJump;
     }
-
+    
 
     // Use this for initialization
     void Start()
