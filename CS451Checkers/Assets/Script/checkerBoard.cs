@@ -16,6 +16,8 @@ public class checkerBoard : MonoBehaviour {
     private int selectedPiece;
     public GameObject[] pieces = new GameObject[24];
     private GameLogic gameLogic;
+    private int currentTurn;
+    private int playerNumber;
 
     private Vector2 mouseOver;
     private Vector2 startDrag;
@@ -24,19 +26,27 @@ public class checkerBoard : MonoBehaviour {
     private Client client;
 
     void Start () {
+        currentTurn = 1;
         gameLogic = GetComponent<GameLogic>();
         generateBoard();
         Instance = this;
         client = FindObjectOfType<Client>();
+
+        
+        if (client.isHost)
+            playerNumber = 1;
+        else
+            playerNumber = 2;
+        
+        //playerNumber = 1;
     }
 
     // Update is called once per frame
     void Update () {
-        UpdateMouseOver();
-       
-        
 
-        //if my turn
+        UpdateMouseOver();
+                       
+        if(playerNumber == currentTurn)
         {
             int x = (int)mouseOver.x;
             int y = (int)mouseOver.y;
@@ -88,22 +98,37 @@ public class checkerBoard : MonoBehaviour {
             startDrag = mouseOver;
             Debug.Log(selectedPiece);
         }
+        else
+        {
+            selectedPiece = -1;
+        }
        
         
     }
 
     private void TryMove(int x1, int y1, int x2, int y2)
     {
+        if(selectedPiece == -1)
+        {
+            return;
+        }
+
         // Multiplayer Support
         startDrag = new Vector2(x1, y1);
         endDrag = new Vector2(x2, y2);
         Debug.Log(endDrag.x+" "+endDrag.y);
         Piece spiece = gameLogic.getPiece(selectedPiece);
+
+        if((!spiece.isWhite() && playerNumber==1) || (spiece.isWhite() && playerNumber == 2))
+        {
+            return;
+        }
+
         Move move = new Move(spiece, x2, y2);
         if (gameLogic.validMove(move))
         {
             gameLogic.makeMove(move);
-
+            
             string msg = "C:Move|" + client.clientName + "|";
             msg += spiece.getID() + "|";
             msg += endDrag.x.ToString() + "|";
@@ -112,6 +137,14 @@ public class checkerBoard : MonoBehaviour {
 
             client.Send(msg);
         }
+    }
+
+    public void changeTurn()
+    {
+        if (currentTurn == 1)
+            currentTurn = 2;
+        else
+            currentTurn = 1;
     }
 
 
@@ -146,7 +179,7 @@ public class checkerBoard : MonoBehaviour {
             {
                 MovePiece(go, 12, 12);
             }
-            if ((newpiece.isKing() == true) && ((go.name != "whiteKing(Clone)") || (go.name != "blackKing(Clone)")))
+            if ((newpiece.isKing() == true) && ((go.name != "whiteKing(Clone)") && (go.name != "blackKing(Clone)")))
             {
                 if (newpiece.isWhite() == true)
                 {
@@ -171,6 +204,7 @@ public class checkerBoard : MonoBehaviour {
             }
         }
     }
+    
 
     private void generateBoard()
     {

@@ -29,7 +29,7 @@ public class GameLogic : MonoBehaviour {
             {
                 for (int x = 0; x < 8; x += 2)
                 {
-                    pieceList[z] = new Piece(z, y, x, false);
+                    pieceList[z] = new Piece(z, y, x, true);
                     myBoard[x][y] = pieceList[z];
                     z++;
                 }
@@ -39,7 +39,7 @@ public class GameLogic : MonoBehaviour {
             {
                 for (int x = 1; x < 8; x += 2)
                 {
-                    pieceList[z] = new Piece(z, y, x, false);
+                    pieceList[z] = new Piece(z, y, x, true);
                     myBoard[x][y] = pieceList[z];
                     z++;
                 }
@@ -53,7 +53,7 @@ public class GameLogic : MonoBehaviour {
             {
                 for (int x = 0; x < 8; x += 2)
                 {
-                    pieceList[z] = new Piece(z, y, x, true);
+                    pieceList[z] = new Piece(z, y, x, false);
                     myBoard[x][y] = pieceList[z];
                     z++;
                 }
@@ -63,12 +63,13 @@ public class GameLogic : MonoBehaviour {
             {
                 for (int x = 1; x < 8; x += 2)
                 {
-                    pieceList[z] = new Piece(z, y, x, true);
+                    pieceList[z] = new Piece(z, y, x, false);
                     myBoard[x][y] = pieceList[z];
                     z++;
                 }
             }
         }
+        
     }
 
     public Piece selectPiece(int x, int y)
@@ -83,27 +84,29 @@ public class GameLogic : MonoBehaviour {
     {
 
         Piece piece = move.getPiece();
-        int x = move.getX();
-        int y = move.getY();
+        int x = move.getMoveX();
+        int y = move.getMoveY();
+
+        int oldx = move.getStartX();
+        int oldy = move.getStartY();
+
+
 
         if (piece == null)
         {
             Debug.Log("We got a null piece in valid");
         }
 
-        int oldx = piece.getX();
-        int oldy = piece.getY();
-
         //check if its a king, otherwise
         //check its moving foward
 
         if (!piece.isKing())
         {
-            if (piece.isWhite() && y > oldy)
+            if (piece.isWhite() && y < oldy)
             {
                 return false;
             }
-            else if ((!piece.isWhite()) && y < oldy)
+            else if ((!piece.isWhite()) && y > oldy)
             {
                 return false;
             }
@@ -123,7 +126,7 @@ public class GameLogic : MonoBehaviour {
         }
 
         //check if the movement is more than one space that there is a piece to capture in between NOT DONE
-        /*
+        
         if (xdiff > 1 || ydiff > 1)
         {
             if (!canJump(move))
@@ -131,7 +134,7 @@ public class GameLogic : MonoBehaviour {
                 return false;
             }
         }
-        */
+        
 
         return true;
     }
@@ -139,22 +142,70 @@ public class GameLogic : MonoBehaviour {
     public bool makeMove(Move move)
     {
         Piece piece = move.getPiece();
-        int x = move.getX();
-        int y = move.getY();
+        int x = move.getMoveX();
+        int y = move.getMoveY();
 
-        if(!validMove(move)){
+        int oldx = move.getStartX();
+        int oldy = move.getStartY();
+
+        if (!validMove(move)){
             return false;
         }
-
-        int oldx = piece.getX();
-        int oldy = piece.getY();
+        
         int xdiff = Mathf.Abs(oldx - x);
         int ydiff = Mathf.Abs(oldy - y);
 
-        if (xdiff > 2 || ydiff > 2)
+        Debug.Log("diffs x " + xdiff + " y " + ydiff);
+
+        if (xdiff > 1 || ydiff > 1)
         {
-            Move[] jumpMoves = getJumpMoves(move);
-            //finish working with jump moves to capture pieces
+            Debug.Log("trying to remove pieces");
+            ArrayList jumpMoves = getJumpMoves(move);
+
+            foreach (Move jmove in jumpMoves)
+            {
+                int x1 = jmove.getStartX();
+                int y1 = jmove.getStartY();
+
+                int x3 = jmove.getMoveX();
+                int y3 = jmove.getMoveY();
+
+                int x2, y2;
+
+                if (x1 > x3)
+                {
+                    x2 = x1 - 1;
+                }
+                else
+                {
+                    x2 = x3 - 1;
+                }
+
+                if (y1 > y3)
+                {
+                    y2 = y1 - 1;
+                }
+                else
+                {
+                    y2 = y3 - 1;
+                }
+
+                Debug.Log("Start x:" + x1 + " y:" + y1);
+                Debug.Log("End x:" + x3 + " y:" + y3);
+                Debug.Log("Removing x:" + x2 + " y:" + y2);
+
+                if (myBoard[x2][y2] == null)
+                {
+                    Debug.Log("Error in jump logic");
+                }
+                else
+                {
+                    int pieceID = myBoard[x2][y2].getID();
+                    pieceList[myBoard[x2][y2].getID()].capture();
+                    myBoard[x2][y2] = null;
+                    Debug.Log("removing x:" + x2 + " y:" + y2 + " pieceID:" + pieceID);
+                }
+            }
         }
 
 
@@ -173,8 +224,10 @@ public class GameLogic : MonoBehaviour {
         myBoard[oldx][oldy] = null;
 
         checkBoard.updateBoard(pieceList);
+        checkBoard.changeTurn();
+        checkWin();
 
-        return false;
+        return true;
     }
 
     public Piece[][] getBoard()
@@ -233,19 +286,210 @@ public class GameLogic : MonoBehaviour {
 
     public bool canJump(Move move) //not finished
     {
+        ArrayList jumpList = getJumpMoves(move);
+
+        if (jumpList != null && jumpList.Count > 0)
+        {
+            return true;
+        }
+
         return false;
     }
 
-    public bool canJumpNext(Move move) //not finished
+    public bool canJumpNext(Move move) //this only takes jumps that are single jumps
     {
+        Piece piece = move.getPiece();
+        int x1 = move.getStartX();
+        int y1 = move.getStartY();
+
+        int x3 = move.getMoveX();
+        int y3 = move.getMoveY();
+
+        int x2, y2;
+
+        if(x1 > x3)
+        {
+            x2 = x1 - 1;
+        }
+        else
+        {
+            x2 = x3 - 1;
+        }
+
+        if (y1 > y3)
+        {
+            y2 = y1 - 1;
+        }
+        else
+        {
+            y2 = y3 - 1;
+        }
+
+        if (x3 < 0 || x3 >= 8 || y3 < 0 || y3 >= 8)
+            return false;  
+
+        if (myBoard[x3][y3] != null)
+            return false;
+
+        if (piece.isKing())
+        {
+            if (myBoard[x2][y2] == null)
+                return false;
+            if (piece.isWhite() == myBoard[x2][y2].isWhite())
+                return false;
+            return true;
+        }
+
+        if (piece.isWhite())
+        {
+            if (y3 < y1)
+                return false;
+            if (myBoard[x2][y2] == null)
+                return false;
+            if (myBoard[x2][y2].isWhite())
+                return false;
+            return true; 
+        }
+        else
+        {
+            if (y3 > y1)
+                return false;
+            if (myBoard[x2][y2] == null)
+                return false;
+            if (!myBoard[x2][y2].isWhite())
+                return false;
+            return true;
+        }
+
+        Debug.Log("We got here");
+
         return false;
     }
 
-    public Move[] getJumpMoves(Move move) //not finished
+
+    public ArrayList getJumpMoves(Move move) //not finished
     {
+        ArrayList moveList = new ArrayList();
+        
+        Piece piece = move.getPiece();
+        int x1 = move.getStartX();
+        int y1 = move.getStartY();
+
+        int x3 = move.getMoveX();
+        int y3 = move.getMoveY();
+
+        if (piece.isKing() || piece.isWhite())
+        {
+
+            if (canJumpNext(new Move(piece, x1, y1, x1 + 2, y1 + 2))) {
+                Move nextMove = new Move(piece, x1, y1, x1 + 2, y1 + 2);
+
+                if ((x3 == nextMove.getMoveX()) && (y3 == nextMove.getMoveY()))
+                {
+                    moveList.Add(nextMove);
+                    return moveList;
+                }
+                else
+                {
+                    ArrayList jumpList = getJumpMoves(new Move(piece, x1 + 2, y1 + 2, x3, y3));
+
+                    if (jumpList != null && jumpList.Count > 0)
+                    {
+                        moveList.Add(nextMove);
+                        foreach (Move jMove in jumpList)
+                        {
+                            moveList.Add(jMove);
+                        }
+                        return moveList;
+                    }
+                }
+
+            }
+
+            if (canJumpNext(new Move(piece, x1, y1, x1 - 2, y1 + 2)))
+            {
+                Move nextMove = new Move(piece, x1, y1, x1 - 2, y1 + 2);
+
+                if ((x3 == nextMove.getMoveX()) && (y3 == nextMove.getMoveY()))
+                {
+                    moveList.Add(nextMove);
+                    return moveList;
+                }
+                else
+                {
+                    ArrayList jumpList = getJumpMoves(new Move(piece, x1 - 2, y1 + 2, x3, y3));
+
+                    if (jumpList != null && jumpList.Count > 0)
+                    {
+                        moveList.Add(nextMove);
+                        foreach (Move jMove in jumpList)
+                        {
+                            moveList.Add(jMove);
+                        }
+                        return moveList;
+                    }
+                }
+            }
+
+        }
+
+        if (piece.isKing() || (!piece.isWhite()))
+        {
+
+            if (canJumpNext(new Move(piece, x1, y1, x1 - 2, y1 - 2)))
+            {
+                Move nextMove = new Move(piece, x1, y1, x1 - 2, y1 - 2);
+
+                if ((x3 == nextMove.getMoveX()) && (y3 == nextMove.getMoveY()))
+                {
+                    moveList.Add(nextMove);
+                    return moveList;
+                }
+                else
+                {
+                    ArrayList jumpList = getJumpMoves(new Move(piece, x1 - 2, y1 - 2, x3, y3));
+
+                    if (jumpList != null && jumpList.Count > 0)
+                    {
+                        moveList.Add(nextMove);
+                        foreach (Move jMove in jumpList)
+                        {
+                            moveList.Add(jMove);
+                        }
+                        return moveList;
+                    }
+                }
+            }
+
+            if (canJumpNext(new Move(piece, x1, y1, x1 + 2, y1 - 2)))
+            {
+                Move nextMove = new Move(piece, x1, y1, x1 + 2, y1 - 2);
+
+                if ((x3 == nextMove.getMoveX()) && (y3 == nextMove.getMoveY()))
+                {
+                    moveList.Add(nextMove);
+                    return moveList;
+                }
+                else
+                {
+                    ArrayList jumpList = getJumpMoves(new Move(piece, x1 + 2, y1 - 2, x3, y3));
+
+                    if (jumpList != null && jumpList.Count > 0)
+                    {
+                        moveList.Add(nextMove);
+                        foreach (Move jMove in jumpList)
+                        {
+                            moveList.Add(jMove);
+                        }
+                        return moveList;
+                    }
+                }
+            }
+
+        }
+
         return null;
     }
-
 
 
     // Use this for initialization
