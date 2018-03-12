@@ -25,6 +25,8 @@ public class checkerBoard : MonoBehaviour {
 
     private Client client;
 
+    public Text turnText;
+
     void Start () {
         currentTurn = 1;
         gameLogic = GetComponent<GameLogic>();
@@ -45,6 +47,14 @@ public class checkerBoard : MonoBehaviour {
     void Update () {
 
         UpdateMouseOver();
+        if (currentTurn == 1)
+        {
+            turnText.text = "Player 1 Turn" + "\n" + "(White)";
+        }
+        else if (currentTurn == 2)
+        {
+            turnText.text = "Player 2 Turn" + "\n" + "(Black)";
+        }
                        
         if(playerNumber == currentTurn)
         {
