@@ -28,13 +28,15 @@ public class checkerBoard : MonoBehaviour {
     public Text turnText;
 
     void Start () {
-        currentTurn = 1;
+
         gameLogic = GetComponent<GameLogic>();
         generateBoard();
         Instance = this;
         client = FindObjectOfType<Client>();
 
-        
+        currentTurn = 1;
+        turnText.text = "Player 1 Turn" + "\n" + "(White)";
+
         if (client.isHost)
             playerNumber = 1;
         else
@@ -47,14 +49,6 @@ public class checkerBoard : MonoBehaviour {
     void Update () {
 
         UpdateMouseOver();
-        if (currentTurn == 1)
-        {
-            turnText.text = "Player 1 Turn" + "\n" + "(White)";
-        }
-        else if (currentTurn == 2)
-        {
-            turnText.text = "Player 2 Turn" + "\n" + "(Black)";
-        }
                        
         if(playerNumber == currentTurn)
         {
@@ -152,9 +146,28 @@ public class checkerBoard : MonoBehaviour {
     public void changeTurn()
     {
         if (currentTurn == 1)
+        {
             currentTurn = 2;
+            turnText.text = "Player 2 Turn" + "\n" + "(Black)";
+        }
         else
+        {
             currentTurn = 1;
+            turnText.text = "Player 1 Turn" + "\n" + "(White)";
+        }
+    }
+
+    public void declareWinner(int winningPlayer)
+    {
+        currentTurn = -1;
+        if (winningPlayer == 1)
+        {
+            turnText.text = "Player 1 Wins" + "\n" + "(White)";
+        }
+        else
+        {
+            turnText.text = "Player 2 Wins" + "\n" + "(Black)";
+        }
     }
 
 
