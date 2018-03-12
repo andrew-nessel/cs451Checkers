@@ -35,7 +35,6 @@ public class checkerBoard : MonoBehaviour {
         _playerNumber = (_client.IsHost) ? 1 : 2;
         TurnText.text = "Player 1 Turn" + "\n" + "(White)";
         
-        //_playerNumber = 1;
     }
 
     // Update is called once per frame
@@ -87,13 +86,11 @@ public class checkerBoard : MonoBehaviour {
     {
         
         Piece pi = _gameLogic.SelectPiece(x, y);
-        //Debug.Log(_gameLogic.GetBoard()[0][0].GetId());
 
         if (pi != null)
         {
             _selectedPiece = pi.GetId();
             _startDrag = _mouseOver;
-            Debug.Log(_selectedPiece);
         }
         else
         {
@@ -113,7 +110,6 @@ public class checkerBoard : MonoBehaviour {
         // Multiplayer Support
         _startDrag = new Vector2(x1, y1);
         _endDrag = new Vector2(x2, y2);
-        Debug.Log(_endDrag.x+" "+_endDrag.y);
         Piece spiece = _gameLogic.GetPiece(_selectedPiece);
 
         if((!spiece.IsWhite() && _playerNumber==1) || (spiece.IsWhite() && _playerNumber == 2))
@@ -204,10 +200,7 @@ public class checkerBoard : MonoBehaviour {
                     int newY = newpiece.GetY();
                     go = Instantiate(WhiteKing, (new Vector3(newX * 10 + 5, 0.2f, newY * 10 + 5)), transform.rotation);
                     Pieces[newpiece.GetId()] = go;
-                    Debug.Log(go.GetType());
-
-                    //MovePiece(go, newX, newY);
-
+                    
                 }
                 if (newpiece.IsWhite() == false)
                 {

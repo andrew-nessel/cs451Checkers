@@ -94,7 +94,6 @@ public class GameLogic : MonoBehaviour {
 
         if (piece == null)
         {
-            Debug.Log("We got a null piece in valid");
             return false;
         }
 
@@ -163,13 +162,10 @@ public class GameLogic : MonoBehaviour {
         int xdiff = Mathf.Abs(oldx - x);
         int ydiff = Mathf.Abs(oldy - y);
 
-        Debug.Log("diffs x " + xdiff + " y " + ydiff);
-
         if (xdiff > 1 || ydiff > 1)
         {
             if (CanJumpNext(move))
             {
-                Debug.Log("trying to remove pieces");
                 int x1 = move.GetStartX();
                 int y1 = move.GetStartY();
 
@@ -196,10 +192,6 @@ public class GameLogic : MonoBehaviour {
                     y2 = y3 - 1;
                 }
 
-                Debug.Log("Start x:" + x1 + " y:" + y1);
-                Debug.Log("End x:" + x3 + " y:" + y3);
-                Debug.Log("Removing x:" + x2 + " y:" + y2);
-
                 if (_myBoard[x2][y2] == null)
                 {
                     Debug.Log("Error in jump logic");
@@ -209,7 +201,6 @@ public class GameLogic : MonoBehaviour {
                     int pieceId = _myBoard[x2][y2].GetId();
                     _pieceList[_myBoard[x2][y2].GetId()].Capture();
                     _myBoard[x2][y2] = null;
-                    Debug.Log("removing x:" + x2 + " y:" + y2 + " pieceID:" + pieceId);
                 }
 
                 //update x and y
@@ -279,8 +270,6 @@ public class GameLogic : MonoBehaviour {
             return null;
         }
 
-        Debug.Log("We got number " + id + " and that is piece " + _pieceList[id].GetId());
-
         return _pieceList[id];
     }
 
@@ -307,19 +296,17 @@ public class GameLogic : MonoBehaviour {
 
         if (blackWin && whiteWin)
         {
-            Debug.Log("Both players win, something went wrong..."); //do something
+            Debug.Log("Both players win, something went wrong..."); 
         }
 
         if (blackWin)
         {
             CheckBoard.declareWinner(2);
-            Debug.Log("Black Wins"); //do something
         }
 
         if (whiteWin)
         {
             CheckBoard.declareWinner(1);
-            Debug.Log("White Wins"); //do something
         }
     }
 
@@ -425,11 +412,6 @@ public class GameLogic : MonoBehaviour {
                 return false;
             return true;
         }
-
-        // Commented out because unreachable
- //       Debug.Log("We got here");
-
- //       return false;
     }
 
     public bool WaitingForJump()
