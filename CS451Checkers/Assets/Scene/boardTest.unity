@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4482447, g: 0.4982717, b: 0.5755809, a: 1}
+  m_IndirectSpecularColor: {r: 0.44824475, g: 0.49827188, b: 0.5755814, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -359,6 +359,7 @@ GameObject:
   - component: {fileID: 1376735642}
   - component: {fileID: 1376735646}
   - component: {fileID: 1376735647}
+  - component: {fileID: 1376735648}
   m_Layer: 8
   m_Name: board
   m_TagString: Untagged
@@ -487,6 +488,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 10, y: 1, z: 10}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1376735648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1376735641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02ff4aa162b7adc49ac87f998ddf571b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CheckBoard: {fileID: 0}
+  WaitForJump: 0
 --- !u!1 &1461060454
 GameObject:
   m_ObjectHideFlags: 0
