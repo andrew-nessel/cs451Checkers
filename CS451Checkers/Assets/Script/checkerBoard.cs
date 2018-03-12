@@ -33,7 +33,7 @@ public class checkerBoard : MonoBehaviour {
 
 
         _playerNumber = (_client.IsHost) ? 1 : 2;
-
+        TurnText.text = "Player 1 Turn" + "\n" + "(White)";
         
         //_playerNumber = 1;
     }
@@ -42,14 +42,6 @@ public class checkerBoard : MonoBehaviour {
     void Update () {
 
         UpdateMouseOver();
-        if (_currentTurn == 1)
-        {
-            TurnText.text = "Player 1 Turn" + "\n" + "(White)";
-        }
-        else if (_currentTurn == 2)
-        {
-            TurnText.text = "Player 2 Turn" + "\n" + "(Black)";
-        }
                        
         if(_playerNumber == _currentTurn)
         {
@@ -146,7 +138,29 @@ public class checkerBoard : MonoBehaviour {
 
     public void ChangeTurn()
     {
-        _currentTurn = (_currentTurn == 1) ? 2 : 1;
+        if (_currentTurn == 1)
+        {
+            _currentTurn = 2;
+            TurnText.text = "Player 2 Turn" + "\n" + "(Black)";
+        }
+        else
+        {
+            _currentTurn = 1;
+            TurnText.text = "Player 1 Turn" + "\n" + "(White)";
+        }
+    }
+
+    public void declareWinner(int winningPlayer)
+    {
+        _currentTurn = -1;
+        if (winningPlayer == 1)
+        {
+            TurnText.text = "Player 1 Wins" + "\n" + "(White)";
+        }
+        else
+        {
+            TurnText.text = "Player 2 Wins" + "\n" + "(Black)";
+        }
     }
 
 

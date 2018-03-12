@@ -312,11 +312,13 @@ public class GameLogic : MonoBehaviour {
 
         if (blackWin)
         {
+            checkBoard.declareWinner(2);
             Debug.Log("Black Wins"); //do something
         }
 
         if (whiteWin)
         {
+            checkBoard.declareWinner(1);
             Debug.Log("White Wins"); //do something
         }
     }
