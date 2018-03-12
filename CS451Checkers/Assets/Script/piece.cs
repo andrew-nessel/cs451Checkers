@@ -1,74 +1,70 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿public class Piece {
 
-public class Piece {
+    protected int Id;
+    protected bool White;
+    protected bool King;
+    protected int X;
+    protected int Y;
+    protected bool Captured;
 
-    protected int ID;
-    protected bool white;
-    protected bool king;
-    protected int x;
-    protected int y;
-    protected bool captured;
-
-    public Piece(int ID, int y, int x, bool isWhite)
+    public Piece(int id, int y, int x, bool isWhite)
     {
-        this.ID = ID;
-        this.white = isWhite;
-        this.king = false;
-        this.captured = false;
-        this.x = x;
-        this.y = y;
+        this.Id = id;
+        this.White = isWhite;
+        this.King = false;
+        this.Captured = false;
+        this.X = x;
+        this.Y = y;
     }
 
-    public int getX()
+    public int GetX()
     {
-        return x;
+        return X;
     }
 
-    public void updateX(int x)
+    public void UpdateX(int x)
     {
-        this.x = x;
+        this.X = x;
     }
 
-    public int getY()
+    public int GetY()
     {
-        return y;
+        return Y;
     }
 
-    public void updateY(int y)
+    public void UpdateY(int y)
     {
-        this.y = y;
+        this.Y = y;
     }
 
-    public int getID()
+    public int GetId()
     {
-        return ID;
+        return Id;
     }
 
-    public bool isWhite()
+    public bool IsWhite()
     {
-        return white;
+        return White;
     }
 
-    public bool isKing()
+    public bool IsKing()
     {
-        return king;
+        return King;
     }
 
-    public void kingMe()
+    public void KingMe()
     {
-        king = true;
+        King = true;
     }
 
-    public bool isCaptured()
+    public bool IsCaptured()
     {
-        return captured;
+        return Captured;
     }
 
-    public void capture()
+    public void Capture()
     {
-        captured = true;
+        Captured = true;
     }
 
 

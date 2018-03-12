@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -8,20 +7,20 @@ using UnityEngine;
 
 public class Server : MonoBehaviour
 {
-    public int port = 1234;
+    public int Port = 1234;
 
-    private List<ServerClient> clients;
-    private List<ServerClient> disconnectList;
+    private List<ServerClient> _clients;
+    private List<ServerClient> _disconnectList;
 
-    private TcpListener server;
-    private bool serverStarted;
+    private TcpListener _server;
+    private bool _serverStarted;
 
     // Called when creating server
     public void Init(string ip)
     {
         DontDestroyOnLoad(gameObject);
-        clients = new List<ServerClient>();
-        disconnectList = new List<ServerClient>();
+        _clients = new List<ServerClient>();
+        _disconnectList = new List<ServerClient>();
 
         try
         {
@@ -29,19 +28,19 @@ public class Server : MonoBehaviour
             if (IPAddress.TryParse(ip, out ipAddress))
             {
                 Debug.Log("!");
-                server = new TcpListener(ipAddress, port);
+                _server = new TcpListener(ipAddress, Port);
             }
             else
             {
                 Debug.Log("@");
                 // Failsafe: Accept any IP Address as long as the port matches
-                server = new TcpListener(IPAddress.Any, port);
+                _server = new TcpListener(IPAddress.Any, Port);
             }
 
 
-            server.Start();
+            _server.Start();
 
-            serverStarted = true;
+            _serverStarted = true;
             StartListening();
         }
         catch (Exception e)
@@ -52,21 +51,21 @@ public class Server : MonoBehaviour
 
     private void Update()
     {
-        if (!serverStarted)
+        if (!_serverStarted)
             return;
 
-        foreach (ServerClient c in clients)
+        foreach (ServerClient c in _clients)
         {
             // Is the client still connected?
-            if (!IsConnected(c.tcp))
+            if (!IsConnected(c.Tcp))
             {
-                c.tcp.Close();
-                disconnectList.Add(c);
-                continue;
+                c.Tcp.Close();
+                _disconnectList.Add(c);
+              //  continue;
             }
             else
             {
-                NetworkStream s = c.tcp.GetStream();
+                NetworkStream s = c.Tcp.GetStream();
                 if (s.DataAvailable)
                 {
                     StreamReader reader = new StreamReader(s, true);
@@ -78,17 +77,17 @@ public class Server : MonoBehaviour
             }
         }
 
-        for (int i = disconnectList.Count - 1; i >= 0; i--)
+        for (int i = _disconnectList.Count - 1; i >= 0; i--)
         {
             // Tell our player somebody has disconnected
-            clients.Remove(disconnectList[i]);
-            disconnectList.RemoveAt(i);
+            _clients.Remove(_disconnectList[i]);
+            _disconnectList.RemoveAt(i);
         }
     }
 
     private void StartListening()
     {
-        server.BeginAcceptTcpClient(AcceptTcpClient, server);
+        _server.BeginAcceptTcpClient(AcceptTcpClient, _server);
     }
 
     private void AcceptTcpClient(IAsyncResult ar)
@@ -96,18 +95,18 @@ public class Server : MonoBehaviour
         TcpListener listener = (TcpListener)ar.AsyncState;
 
         string allUsers = "";
-        foreach (ServerClient sclient in clients)
+        foreach (ServerClient sclient in _clients)
         {
-            allUsers += sclient.clientName + '|';
+            allUsers += sclient.ClientName + '|';
         }
 
         ServerClient sc = new ServerClient(listener.EndAcceptTcpClient(ar));
-        clients.Add(sc);
+        _clients.Add(sc);
 
-        if (clients.Count < 2)
+        if (_clients.Count < 2)
             StartListening();
 
-        Broadcast("S:Connection|" + allUsers, clients[clients.Count - 1]);
+        Broadcast("S:Connection|" + allUsers, _clients[_clients.Count - 1]);
     }
 
     private bool IsConnected(TcpClient c)
@@ -117,7 +116,7 @@ public class Server : MonoBehaviour
             if (c != null && c.Client != null && c.Client.Connected)
             {
                 if (c.Client.Poll(0, SelectMode.SelectRead))
-                    return !(c.Client.Receive(new byte[1], SocketFlags.Peek) == 0);
+                    return (c.Client.Receive(new byte[1], SocketFlags.Peek) != 0);
 
                 return true;
             }
@@ -138,7 +137,7 @@ public class Server : MonoBehaviour
         {
             try
             {
-                StreamWriter writer = new StreamWriter(sc.tcp.GetStream());
+                StreamWriter writer = new StreamWriter(sc.Tcp.GetStream());
                 writer.WriteLine(data);
                 writer.Flush();
             }
@@ -163,15 +162,15 @@ public class Server : MonoBehaviour
         switch (aData[0])
         {
             case "C:Player":
-                c.clientName = aData[1];
-                c.isHost = (aData[2] == "(Host)");
-                Broadcast("SCNN|" + c.clientName + " " + c.isHost, clients);
+                c.ClientName = aData[1];
+                c.IsHost = (aData[2] == "(Host)");
+                Broadcast("SCNN|" + c.ClientName + " " + c.IsHost, _clients);
                 break;
             case "C:Move":
                 // aData[1] contains the Player Name of the player who made the move
                 // Broadcast the message only to the player who didn't make the move, so that the same move isn't
                 // repeated by the initial player
-                Broadcast("S:Move|" + aData[2] + "|" + aData[3] + "|" + aData[4] + "|Client Receieved", clients.Find(cl => cl.clientName != aData[1]));
+                Broadcast("S:Move|" + aData[2] + "|" + aData[3] + "|" + aData[4] + "|Client Receieved", _clients.Find(cl => cl.ClientName != aData[1]));
                 break;
         }
     }
@@ -181,12 +180,12 @@ public class Server : MonoBehaviour
 // Definition of client
 public class ServerClient
 {
-    public string clientName;
-    public TcpClient tcp;
-    public bool isHost;
+    public string ClientName;
+    public TcpClient Tcp;
+    public bool IsHost;
 
     public ServerClient(TcpClient tcp)
     {
-        this.tcp = tcp;
+        this.Tcp = tcp;
     }
 }

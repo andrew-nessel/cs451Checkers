@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Move {
+﻿public class Move {
 
     private Piece movePiece;
     private int startX;
@@ -13,8 +9,8 @@ public class Move {
     public Move(Piece piece, int x, int y)
     {
         this.movePiece = piece;
-        this.startX = piece.getX();
-        this.startY = piece.getY();
+        this.startX = piece.GetX();
+        this.startY = piece.GetY();
         this.moveX = x;
         this.moveY = y;
     }
@@ -22,33 +18,33 @@ public class Move {
     public Move(Piece piece, int startX, int startY, int moveX, int moveY)
     {
         this.movePiece = piece;
-        this.startX = piece.getX();
-        this.startY = piece.getY();
+        this.startX = piece.GetX();
+        this.startY = piece.GetY();
         this.moveX = moveX;
         this.moveY = moveY;
     }
 
-    public Piece getPiece()
+    public Piece GetPiece()
     {
         return movePiece;
     }
 
-    public int getMoveX()
+    public int GetMoveX()
     {
         return moveX;
     }
 
-    public int getMoveY()
+    public int GetMoveY()
     {
         return moveY;
     }
 
-    public int getStartX()
+    public int GetStartX()
     {
         return startX;
     }
 
-    public int getStartY()
+    public int GetStartY()
     {
         return startY;
     }

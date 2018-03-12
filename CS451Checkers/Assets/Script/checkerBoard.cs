@@ -1,65 +1,60 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class checkerBoard : MonoBehaviour {
 
     public static checkerBoard Instance { get; set; }
 
     // Use this for initialization
-    public GameObject whitePiece;
-    public GameObject blackPiece;
-    public GameObject whiteKing;
-    public GameObject blackKing;
-    private int selectedPiece;
-    public GameObject[] pieces = new GameObject[24];
-    private GameLogic gameLogic;
-    private int currentTurn;
-    private int playerNumber;
+    public GameObject WhitePiece;
+    public GameObject BlackPiece;
+    public GameObject WhiteKing;
+    public GameObject BlackKing;
+    private int _selectedPiece;
+    public GameObject[] Pieces = new GameObject[24];
+    private GameLogic _gameLogic;
+    private int _currentTurn;
+    private int _playerNumber;
 
-    private Vector2 mouseOver;
-    private Vector2 startDrag;
-    private Vector2 endDrag;
+    private Vector2 _mouseOver;
+    private Vector2 _startDrag;
+    private Vector2 _endDrag;
 
-    private Client client;
+    private Client _client;
 
-    public Text turnText;
+    public Text TurnText;
 
     void Start () {
-        currentTurn = 1;
-        gameLogic = GetComponent<GameLogic>();
-        generateBoard();
+        _currentTurn = 1;
+        _gameLogic = GetComponent<GameLogic>();
+        GenerateBoard();
         Instance = this;
-        client = FindObjectOfType<Client>();
+        _client = FindObjectOfType<Client>();
+
+
+        _playerNumber = (_client.IsHost) ? 1 : 2;
 
         
-        if (client.isHost)
-            playerNumber = 1;
-        else
-            playerNumber = 2;
-        
-        //playerNumber = 1;
+        //_playerNumber = 1;
     }
 
     // Update is called once per frame
     void Update () {
 
         UpdateMouseOver();
-        if (currentTurn == 1)
+        if (_currentTurn == 1)
         {
-            turnText.text = "Player 1 Turn" + "\n" + "(White)";
+            TurnText.text = "Player 1 Turn" + "\n" + "(White)";
         }
-        else if (currentTurn == 2)
+        else if (_currentTurn == 2)
         {
-            turnText.text = "Player 2 Turn" + "\n" + "(Black)";
+            TurnText.text = "Player 2 Turn" + "\n" + "(Black)";
         }
                        
-        if(playerNumber == currentTurn)
+        if(_playerNumber == _currentTurn)
         {
-            int x = (int)mouseOver.x;
-            int y = (int)mouseOver.y;
+            int x = (int)_mouseOver.x;
+            int y = (int)_mouseOver.y;
 
             if(Input.GetMouseButtonDown(0))
             {
@@ -68,7 +63,7 @@ public class checkerBoard : MonoBehaviour {
 
             if(Input.GetMouseButtonUp(0))
             {
-                TryMove((int)startDrag.x, (int)startDrag.y, x, y);
+                TryMove((int)_startDrag.x, (int)_startDrag.y, x, y);
             }
 
         }
@@ -86,31 +81,31 @@ public class checkerBoard : MonoBehaviour {
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 110.0f, LayerMask.GetMask("Board")))
         {
-            mouseOver.x = (int)(hit.point.x/10);
-            mouseOver.y = (int)(hit.point.z/10);
+            _mouseOver.x = (int)(hit.point.x/10);
+            _mouseOver.y = (int)(hit.point.z/10);
         }
         else
         {
-            mouseOver.x = -1;
-            mouseOver.y = -1;
+            _mouseOver.x = -1;
+            _mouseOver.y = -1;
         }
     }
 
     private void SelectPiece(int x, int y)
     {
         
-        Piece pi = gameLogic.selectPiece(x, y);
-        //Debug.Log(gameLogic.getBoard()[0][0].getID());
+        Piece pi = _gameLogic.SelectPiece(x, y);
+        //Debug.Log(_gameLogic.GetBoard()[0][0].GetId());
 
         if (pi != null)
         {
-            selectedPiece = pi.getID();
-            startDrag = mouseOver;
-            Debug.Log(selectedPiece);
+            _selectedPiece = pi.GetId();
+            _startDrag = _mouseOver;
+            Debug.Log(_selectedPiece);
         }
         else
         {
-            selectedPiece = -1;
+            _selectedPiece = -1;
         }
        
         
@@ -118,43 +113,40 @@ public class checkerBoard : MonoBehaviour {
 
     private void TryMove(int x1, int y1, int x2, int y2)
     {
-        if(selectedPiece == -1)
+        if(_selectedPiece == -1)
         {
             return;
         }
 
         // Multiplayer Support
-        startDrag = new Vector2(x1, y1);
-        endDrag = new Vector2(x2, y2);
-        Debug.Log(endDrag.x+" "+endDrag.y);
-        Piece spiece = gameLogic.getPiece(selectedPiece);
+        _startDrag = new Vector2(x1, y1);
+        _endDrag = new Vector2(x2, y2);
+        Debug.Log(_endDrag.x+" "+_endDrag.y);
+        Piece spiece = _gameLogic.GetPiece(_selectedPiece);
 
-        if((!spiece.isWhite() && playerNumber==1) || (spiece.isWhite() && playerNumber == 2))
+        if((!spiece.IsWhite() && _playerNumber==1) || (spiece.IsWhite() && _playerNumber == 2))
         {
             return;
         }
 
         Move move = new Move(spiece, x2, y2);
-        if (gameLogic.validMove(move))
+        if (_gameLogic.ValidMove(move))
         {
-            gameLogic.makeMove(move);
+            _gameLogic.MakeMove(move);
             
-            string msg = "C:Move|" + client.clientName + "|";
-            msg += spiece.getID() + "|";
-            msg += endDrag.x.ToString() + "|";
-            msg += endDrag.y.ToString();
+            string msg = "C:Move|" + _client.ClientName + "|";
+            msg += spiece.GetId() + "|";
+            msg += _endDrag.x + "|";
+            msg += _endDrag.y;
             msg += "|Server Receieved";
 
-            client.Send(msg);
+            _client.Send(msg);
         }
     }
 
-    public void changeTurn()
+    public void ChangeTurn()
     {
-        if (currentTurn == 1)
-            currentTurn = 2;
-        else
-            currentTurn = 1;
+        _currentTurn = (_currentTurn == 1) ? 2 : 1;
     }
 
 
@@ -166,57 +158,57 @@ public class checkerBoard : MonoBehaviour {
     */
     public void UpdateAfterOpponentMove(int pieceId, int x, int y)
     {
-        Piece spiece = gameLogic.getPiece(pieceId);
+        Piece spiece = _gameLogic.GetPiece(pieceId);
         Move move = new Move(spiece, x, y);
-        if (gameLogic.validMove(move))
+        if (_gameLogic.ValidMove(move))
         {
-            gameLogic.makeMove(move);
+            _gameLogic.MakeMove(move);
         }
     }
 
-    public void updateBoard(Piece[] newPieces)
+    public void UpdateBoard(Piece[] newPieces)
     {
         foreach (Piece newpiece in newPieces)
         {
-            GameObject go = pieces[newpiece.getID()];
-            if (!newpiece.isCaptured())
+            GameObject go = Pieces[newpiece.GetId()];
+            if (!newpiece.IsCaptured())
             {
-                int newX = newpiece.getX();
-                int newY = newpiece.getY();
+                int newX = newpiece.GetX();
+                int newY = newpiece.GetY();
                 MovePiece(go, newX, newY);
             }
             else
             {
                 MovePiece(go, 12, 12);
             }
-            if ((newpiece.isKing() == true) && ((go.name != "whiteKing(Clone)") && (go.name != "blackKing(Clone)")))
+            if ((newpiece.IsKing()) && ((go.name != "whiteKing(Clone)") && (go.name != "blackKing(Clone)")))
             {
-                if (newpiece.isWhite() == true)
+                if (newpiece.IsWhite())
                 {
                     MovePiece(go, 12, 12);
-                    int newX = newpiece.getX();
-                    int newY = newpiece.getY();
-                    go = Instantiate(whiteKing, (new Vector3(newX * 10 + 5, 0.2f, newY * 10 + 5)), transform.rotation);
-                    pieces[newpiece.getID()] = go;
+                    int newX = newpiece.GetX();
+                    int newY = newpiece.GetY();
+                    go = Instantiate(WhiteKing, (new Vector3(newX * 10 + 5, 0.2f, newY * 10 + 5)), transform.rotation);
+                    Pieces[newpiece.GetId()] = go;
                     Debug.Log(go.GetType());
 
                     //MovePiece(go, newX, newY);
 
                 }
-                if (newpiece.isWhite() == false)
+                if (newpiece.IsWhite() == false)
                 {
                     MovePiece(go, 12, 12);
-                    int newX = newpiece.getX();
-                    int newY = newpiece.getY();
-                    go = Instantiate(blackKing, (new Vector3(newX * 10 + 5, 0.2f, newY * 10 + 5)), transform.rotation);
-                    pieces[newpiece.getID()] = go;
+                    int newX = newpiece.GetX();
+                    int newY = newpiece.GetY();
+                    go = Instantiate(BlackKing, (new Vector3(newX * 10 + 5, 0.2f, newY * 10 + 5)), transform.rotation);
+                    Pieces[newpiece.GetId()] = go;
                 }
             }
         }
     }
     
 
-    private void generateBoard()
+    private void GenerateBoard()
     {
 
         Vector3 piecePos;
@@ -230,7 +222,7 @@ public class checkerBoard : MonoBehaviour {
                 for (int x = 0; x < 8; x += 2)
                 {
                     piecePos = new Vector3(x * 10 + 5, 0.2f, y * 10 + 5);
-                    generatePiece(z, piecePos);
+                    GeneratePiece(z, piecePos);
                     z++;
                 }
 
@@ -240,7 +232,7 @@ public class checkerBoard : MonoBehaviour {
                 for (int x = 1; x < 8; x += 2)
                 {
                     piecePos = new Vector3(x * 10 + 5, 0.2f, y * 10 + 5);
-                    generatePiece(z, piecePos);
+                    GeneratePiece(z, piecePos);
                     z++;
                 }
             }
@@ -254,7 +246,7 @@ public class checkerBoard : MonoBehaviour {
                 for (int x = 0; x < 8; x += 2)
                 {
                     piecePos = new Vector3(x * 10 + 5, 0.2f, y * 10 + 5);
-                    generatePiece(z, piecePos);
+                    GeneratePiece(z, piecePos);
                     z++;
                 }
 
@@ -264,18 +256,18 @@ public class checkerBoard : MonoBehaviour {
                 for (int x = 1; x < 8; x += 2)
                 {
                     piecePos = new Vector3(x * 10 + 5, 0.2f, y * 10 + 5);
-                    generatePiece(z, piecePos);
+                    GeneratePiece(z, piecePos);
                     z++;
                 }
             }
         }
     }
 
-    private void generatePiece(int ID, Vector3 piecePos)
+    private void GeneratePiece(int id, Vector3 piecePos)
     {
-        bool isPieceWhite = (ID > 11) ? false : true;
-        GameObject go = Instantiate((isPieceWhite) ? whitePiece : blackPiece, piecePos, transform.rotation);
-        pieces[ID] = go;
+        bool isPieceWhite = !(id > 11);
+        GameObject go = Instantiate((isPieceWhite) ? WhitePiece : BlackPiece, piecePos, transform.rotation);
+        Pieces[id] = go;
     }
 
      private void MovePiece(GameObject p, int x, int y)

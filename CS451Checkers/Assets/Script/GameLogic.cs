@@ -1,25 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameLogic : MonoBehaviour {
     
-    private Piece[][] myBoard;
-    private Piece[] pieceList;
-    public checkerBoard checkBoard;
-    public bool waitForJump;
+    private Piece[][] _myBoard;
+    private Piece[] _pieceList;
+    public checkerBoard CheckBoard;
+    public bool WaitForJump;
 
-    private void initBoard()
+    private void InitBoard()
     {
 
-        checkBoard = GetComponent<checkerBoard>();
-        myBoard = new Piece[8][];
-        pieceList = new Piece[24];
-        waitForJump = false;
+        CheckBoard = GetComponent<checkerBoard>();
+        _myBoard = new Piece[8][];
+        _pieceList = new Piece[24];
+        WaitForJump = false;
 
         for (int x = 0; x < 8; x++)
         {
-            myBoard[x] = new Piece[8];
+            _myBoard[x] = new Piece[8];
         }
 
 
@@ -31,8 +29,8 @@ public class GameLogic : MonoBehaviour {
             {
                 for (int x = 0; x < 8; x += 2)
                 {
-                    pieceList[z] = new Piece(z, y, x, true);
-                    myBoard[x][y] = pieceList[z];
+                    _pieceList[z] = new Piece(z, y, x, true);
+                    _myBoard[x][y] = _pieceList[z];
                     z++;
                 }
 
@@ -41,8 +39,8 @@ public class GameLogic : MonoBehaviour {
             {
                 for (int x = 1; x < 8; x += 2)
                 {
-                    pieceList[z] = new Piece(z, y, x, true);
-                    myBoard[x][y] = pieceList[z];
+                    _pieceList[z] = new Piece(z, y, x, true);
+                    _myBoard[x][y] = _pieceList[z];
                     z++;
                 }
             }
@@ -55,8 +53,8 @@ public class GameLogic : MonoBehaviour {
             {
                 for (int x = 0; x < 8; x += 2)
                 {
-                    pieceList[z] = new Piece(z, y, x, false);
-                    myBoard[x][y] = pieceList[z];
+                    _pieceList[z] = new Piece(z, y, x, false);
+                    _myBoard[x][y] = _pieceList[z];
                     z++;
                 }
 
@@ -65,8 +63,8 @@ public class GameLogic : MonoBehaviour {
             {
                 for (int x = 1; x < 8; x += 2)
                 {
-                    pieceList[z] = new Piece(z, y, x, false);
-                    myBoard[x][y] = pieceList[z];
+                    _pieceList[z] = new Piece(z, y, x, false);
+                    _myBoard[x][y] = _pieceList[z];
                     z++;
                 }
             }
@@ -74,47 +72,48 @@ public class GameLogic : MonoBehaviour {
         
     }
 
-    public Piece selectPiece(int x, int y)
+    public Piece SelectPiece(int x, int y)
     {
         if (x < 0 || x >= 8 || y < 0 || y >= 8)
            return null;
 
-        return myBoard[x][y];
+        return _myBoard[x][y];
     }
 
-    public bool validMove(Move move)
+    public bool ValidMove(Move move)
     {
 
-        Piece piece = move.getPiece();
-        int x = move.getMoveX();
-        int y = move.getMoveY();
+        Piece piece = move.GetPiece();
+        int x = move.GetMoveX();
+        int y = move.GetMoveY();
 
-        int oldx = move.getStartX();
-        int oldy = move.getStartY();
+        int oldx = move.GetStartX();
+        int oldy = move.GetStartY();
 
 
 
         if (piece == null)
         {
             Debug.Log("We got a null piece in valid");
+            return false;
         }
 
         //check if its a king, otherwise
         //check its moving foward
 
-        if (!piece.isKing())
+        if (!piece.IsKing())
         {
-            if (piece.isWhite() && y < oldy)
+            if (piece.IsWhite() && y < oldy)
             {
                 return false;
             }
-            else if ((!piece.isWhite()) && y > oldy)
+            else if ((!piece.IsWhite()) && y > oldy)
             {
                 return false;
             }
         }
 
-        if(myBoard[x][y] != null)
+        if(_myBoard[x][y] != null)
         {
             return false;
         }
@@ -131,14 +130,14 @@ public class GameLogic : MonoBehaviour {
         
         if (xdiff > 1 || ydiff > 1)
         {
-            if (!canJumpNext(move))
+            if (!CanJumpNext(move))
             {
                 return false;
             }
         }
         else
         {
-            if (waitForJump)
+            if (WaitForJump)
             {
                 return false;
             }
@@ -148,16 +147,16 @@ public class GameLogic : MonoBehaviour {
         return true;
     }
 
-    public bool makeMove(Move move)
+    public bool MakeMove(Move move)
     {
-        Piece piece = move.getPiece();
-        int x = move.getMoveX();
-        int y = move.getMoveY();
+        Piece piece = move.GetPiece();
+        int x = move.GetMoveX();
+        int y = move.GetMoveY();
 
-        int oldx = move.getStartX();
-        int oldy = move.getStartY();
+        int oldx = move.GetStartX();
+        int oldy = move.GetStartY();
 
-        if (!validMove(move)){
+        if (!ValidMove(move)){
             return false;
         }
         
@@ -168,14 +167,14 @@ public class GameLogic : MonoBehaviour {
 
         if (xdiff > 1 || ydiff > 1)
         {
-            if (canJumpNext(move))
+            if (CanJumpNext(move))
             {
                 Debug.Log("trying to remove pieces");
-                int x1 = move.getStartX();
-                int y1 = move.getStartY();
+                int x1 = move.GetStartX();
+                int y1 = move.GetStartY();
 
-                int x3 = move.getMoveX();
-                int y3 = move.getMoveY();
+                int x3 = move.GetMoveX();
+                int y3 = move.GetMoveY();
 
                 int x2, y2;
 
@@ -201,29 +200,29 @@ public class GameLogic : MonoBehaviour {
                 Debug.Log("End x:" + x3 + " y:" + y3);
                 Debug.Log("Removing x:" + x2 + " y:" + y2);
 
-                if (myBoard[x2][y2] == null)
+                if (_myBoard[x2][y2] == null)
                 {
                     Debug.Log("Error in jump logic");
                 }
                 else
                 {
-                    int pieceID = myBoard[x2][y2].getID();
-                    pieceList[myBoard[x2][y2].getID()].capture();
-                    myBoard[x2][y2] = null;
-                    Debug.Log("removing x:" + x2 + " y:" + y2 + " pieceID:" + pieceID);
+                    int pieceId = _myBoard[x2][y2].GetId();
+                    _pieceList[_myBoard[x2][y2].GetId()].Capture();
+                    _myBoard[x2][y2] = null;
+                    Debug.Log("removing x:" + x2 + " y:" + y2 + " pieceID:" + pieceId);
                 }
 
                 //update x and y
-                piece.updateX(x);
-                piece.updateY(y);
+                piece.UpdateX(x);
+                piece.UpdateY(y);
 
-                myBoard[x][y] = piece;
-                myBoard[oldx][oldy] = null;
+                _myBoard[x][y] = piece;
+                _myBoard[oldx][oldy] = null;
 
-                if (canJump(piece))
+                if (CanJump(piece))
                 {
-                    checkBoard.updateBoard(pieceList);
-                    waitForJump = true;
+                    CheckBoard.UpdateBoard(_pieceList);
+                    WaitForJump = true;
                     return true;
                 }
 
@@ -232,13 +231,13 @@ public class GameLogic : MonoBehaviour {
                     //if need be king the piece
                     if (y == 7 || y == 0)
                     {
-                        piece.kingMe();
+                        piece.KingMe();
                     }
 
-                    waitForJump = false;
-                    checkBoard.updateBoard(pieceList);
-                    checkBoard.changeTurn();
-                    checkWin();
+                    WaitForJump = false;
+                    CheckBoard.UpdateBoard(_pieceList);
+                    CheckBoard.ChangeTurn();
+                    CheckWin();
 
                     return true;
                 }
@@ -249,53 +248,53 @@ public class GameLogic : MonoBehaviour {
         //if need be king the piece
         if (y == 7 || y == 0)
         {
-            piece.kingMe();
+            piece.KingMe();
         }
 
-        waitForJump = false;
+        WaitForJump = false;
 
         //update x and y
-        piece.updateX(x);
-        piece.updateY(y);
+        piece.UpdateX(x);
+        piece.UpdateY(y);
 
-        myBoard[x][y] = piece;
-        myBoard[oldx][oldy] = null;
+        _myBoard[x][y] = piece;
+        _myBoard[oldx][oldy] = null;
 
-        checkBoard.updateBoard(pieceList);
-        checkBoard.changeTurn();
-        checkWin();
+        CheckBoard.UpdateBoard(_pieceList);
+        CheckBoard.ChangeTurn();
+        CheckWin();
 
         return true;
     }
 
-    public Piece[][] getBoard()
+    public Piece[][] GetBoard()
     {
-        return myBoard;
+        return _myBoard;
     }
 
-    public Piece getPiece(int ID)
+    public Piece GetPiece(int id)
     {
-        if(ID > 23 || ID < 0)
+        if(id > 23 || id < 0)
         {
             return null;
         }
 
-        Debug.Log("We got number " + ID + " and that is piece " + pieceList[ID].getID());
+        Debug.Log("We got number " + id + " and that is piece " + _pieceList[id].GetId());
 
-        return pieceList[ID];
+        return _pieceList[id];
     }
 
-    public void checkWin()
+    public void CheckWin()
     {
 
         bool blackWin = true;
         bool whiteWin = true;
 
-        foreach (Piece piece in pieceList)
+        foreach (Piece piece in _pieceList)
         {
-            if (!piece.isCaptured())
+            if (!piece.IsCaptured())
             {
-                if (piece.isWhite())
+                if (piece.IsWhite())
                 {
                     blackWin = false;
                 }
@@ -322,35 +321,35 @@ public class GameLogic : MonoBehaviour {
         }
     }
 
-    public bool canJump(Piece piece) //not finished
+    public bool CanJump(Piece piece) //not finished
     {
-        int x1 = piece.getX();
-        int y1 = piece.getY();
+        int x1 = piece.GetX();
+        int y1 = piece.GetY();
 
-        if (piece.isKing() || piece.isWhite())
+        if (piece.IsKing() || piece.IsWhite())
         {
 
-            if (canJumpNext(new Move(piece, x1, y1, x1 + 2, y1 + 2)))
+            if (CanJumpNext(new Move(piece, x1, y1, x1 + 2, y1 + 2)))
             {
                 return true;
             }
 
-            if (canJumpNext(new Move(piece, x1, y1, x1 - 2, y1 + 2)))
+            if (CanJumpNext(new Move(piece, x1, y1, x1 - 2, y1 + 2)))
             {
                 return true;
             }
 
         }
 
-        if (piece.isKing() || (!piece.isWhite()))
+        if (piece.IsKing() || (!piece.IsWhite()))
         {
 
-            if (canJumpNext(new Move(piece, x1, y1, x1 - 2, y1 - 2)))
+            if (CanJumpNext(new Move(piece, x1, y1, x1 - 2, y1 - 2)))
             {
                 return true;
             }
 
-            if (canJumpNext(new Move(piece, x1, y1, x1 + 2, y1 - 2)))
+            if (CanJumpNext(new Move(piece, x1, y1, x1 + 2, y1 - 2)))
             {
                 return true;
             }
@@ -360,14 +359,14 @@ public class GameLogic : MonoBehaviour {
         return false;
     }
 
-    public bool canJumpNext(Move move) //this only takes jumps that are single jumps
+    public bool CanJumpNext(Move move) //this only takes jumps that are single jumps
     {
-        Piece piece = move.getPiece();
-        int x1 = move.getStartX();
-        int y1 = move.getStartY();
+        Piece piece = move.GetPiece();
+        int x1 = move.GetStartX();
+        int y1 = move.GetStartY();
 
-        int x3 = move.getMoveX();
-        int y3 = move.getMoveY();
+        int x3 = move.GetMoveX();
+        int y3 = move.GetMoveY();
 
         int x2, y2;
 
@@ -392,25 +391,25 @@ public class GameLogic : MonoBehaviour {
         if (x3 < 0 || x3 >= 8 || y3 < 0 || y3 >= 8)
             return false;  
 
-        if (myBoard[x3][y3] != null)
+        if (_myBoard[x3][y3] != null)
             return false;
 
-        if (piece.isKing())
+        if (piece.IsKing())
         {
-            if (myBoard[x2][y2] == null)
+            if (_myBoard[x2][y2] == null)
                 return false;
-            if (piece.isWhite() == myBoard[x2][y2].isWhite())
+            if (piece.IsWhite() == _myBoard[x2][y2].IsWhite())
                 return false;
             return true;
         }
 
-        if (piece.isWhite())
+        if (piece.IsWhite())
         {
             if (y3 < y1)
                 return false;
-            if (myBoard[x2][y2] == null)
+            if (_myBoard[x2][y2] == null)
                 return false;
-            if (myBoard[x2][y2].isWhite())
+            if (_myBoard[x2][y2].IsWhite())
                 return false;
             return true; 
         }
@@ -418,28 +417,29 @@ public class GameLogic : MonoBehaviour {
         {
             if (y3 > y1)
                 return false;
-            if (myBoard[x2][y2] == null)
+            if (_myBoard[x2][y2] == null)
                 return false;
-            if (!myBoard[x2][y2].isWhite())
+            if (!_myBoard[x2][y2].IsWhite())
                 return false;
             return true;
         }
 
-        Debug.Log("We got here");
+        // Commented out because unreachable
+ //       Debug.Log("We got here");
 
-        return false;
+ //       return false;
     }
 
-    public bool waitingForJump()
+    public bool WaitingForJump()
     {
-        return waitForJump;
+        return WaitForJump;
     }
     
 
     // Use this for initialization
     void Start()
     {
-        initBoard();
+        InitBoard();
     }
 
     // Update is called once per frame

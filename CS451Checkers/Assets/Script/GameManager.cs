@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -14,8 +12,8 @@ public class GameManager : MonoBehaviour {
 
     public static GameManager Instance { set; get; }
 
-    public GameObject serverPrefab;
-    public GameObject clientPrefab;
+    public GameObject ServerPrefab;
+    public GameObject ClientPrefab;
 
 	void Start () {
         Instance = this;
@@ -38,16 +36,16 @@ public class GameManager : MonoBehaviour {
             string ip = GetLocalIPAddress();
             
             // Create Server on host
-            Server s = Instantiate(serverPrefab).GetComponent<Server>();
+            Server s = Instantiate(ServerPrefab).GetComponent<Server>();
             s.Init(ip);
             
 
             // Create Client on host
-            Client c = Instantiate(clientPrefab).GetComponent<Client>();
+            Client c = Instantiate(ClientPrefab).GetComponent<Client>();
 
             // Hosting Player is Player 1
-            c.clientName = "Player 1";
-            c.isHost = true;
+            c.ClientName = "Player 1";
+            c.IsHost = true;
             c.ConnectToServer(ip, 1234);
         }
         catch(Exception e)
@@ -92,10 +90,10 @@ public class GameManager : MonoBehaviour {
 
         try
         {
-            Client c = Instantiate(clientPrefab).GetComponent<Client>();
+            Client c = Instantiate(ClientPrefab).GetComponent<Client>();
 
             // Joining Player is Player 2
-            c.clientName = "Player 2";
+            c.ClientName = "Player 2";
             if(!c.ConnectToServer(hostAddress, 1234))
                 GameObject.Find("ErrorMessage").GetComponent<TextMeshProUGUI>().text = "Error: Check the IP Address and try again";
         }

@@ -1,31 +1,32 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using UnityEngine;
 
+
 public class Client : MonoBehaviour
 {
-    public string clientName;
-    public bool isHost;
+    public string ClientName;
+    public bool IsHost;
 
     // Keep track if the socket is ready
-    private bool socketReady;
+    private bool _socketReady;
 
     // Objects for connection and data 
-    private TcpClient socket;
-    private NetworkStream stream;
-    private StreamWriter writer;
-    private StreamReader reader;
+    private TcpClient _socket;
+    private NetworkStream _stream;
+    private StreamWriter _writer;
+    private StreamReader _reader;
 
     // Keep track of players connected
     // Server will broadcast a response to each client connected when a new
     // player connects
-    private List<GameClient> players = new List<GameClient>();
+    private List<GameClient> _players;
 
     private void Start()
     {
+        _players = new List<GameClient>();
         DontDestroyOnLoad(gameObject);
     }
 
@@ -37,33 +38,33 @@ public class Client : MonoBehaviour
     public bool ConnectToServer(string host, int port)
     {
         // Don't do anything if already connected
-        if (socketReady)
+        if (_socketReady)
             return false;
 
         try
         {
-            socket = new TcpClient(host, port);
-            stream = socket.GetStream();
-            writer = new StreamWriter(stream);
-            reader = new StreamReader(stream);
+            _socket = new TcpClient(host, port);
+            _stream = _socket.GetStream();
+            _writer = new StreamWriter(_stream);
+            _reader = new StreamReader(_stream);
 
-            socketReady = true;
+            _socketReady = true;
         }
         catch (Exception e)
         {
             Debug.Log("Socket error " + e.Message);
         }
 
-        return socketReady;
+        return _socketReady;
     }
 
     private void Update()
     {
-        if (socketReady)
+        if (_socketReady)
         {
-            if (stream.DataAvailable)
+            if (_stream.DataAvailable)
             {
-                string data = reader.ReadLine();
+                string data = _reader.ReadLine();
                 if (data != null)
                     OnIncomingData(data);
             }
@@ -74,11 +75,11 @@ public class Client : MonoBehaviour
     // Send messages to the server
     public void Send(string data)
     {
-        if (!socketReady)
+        if (!_socketReady)
             return;
 
-        writer.WriteLine(data);
-        writer.Flush();
+        _writer.WriteLine(data);
+        _writer.Flush();
     }
 
     // Read messages from the server
@@ -92,14 +93,14 @@ public class Client : MonoBehaviour
             case "S:Connection":
                 for (int i = 1; i < aData.Length - 1; i++)
                 {
-                    UserConnected(aData[i], false);
+                    UserConnected(aData[i]);
                 }
 
                 // Send to the server a message that this player joined 
-                Send("C:Player|" + clientName + "|" + ((isHost) ? "(Host)" : "(Guest)"));
+                Send("C:Player|" + ClientName + "|" + ((IsHost) ? "(Host)" : "(Guest)"));
                 break;
             case "SCNN":
-                UserConnected(aData[1], false);
+                UserConnected(aData[1]);
                 break;
             case "S:Move":
                 checkerBoard.Instance.UpdateAfterOpponentMove(int.Parse(aData[1]), int.Parse(aData[2]), int.Parse(aData[3]));
@@ -109,16 +110,16 @@ public class Client : MonoBehaviour
         Debug.Log(data);
     }
 
-    private void UserConnected(string pname, bool host)
+    private void UserConnected(string pname)
     {
         GameClient c = new GameClient()
         {
-            name = pname
+            Name = pname
         };
 
-        players.Add(c);
+        _players.Add(c);
 
-        if (players.Count == 2)
+        if (_players.Count == 2)
             GameManager.Instance.StartGame();
     }
 
@@ -134,18 +135,18 @@ public class Client : MonoBehaviour
 
     private void CloseSocket()
     {
-        if (!socketReady)
+        if (!_socketReady)
             return;
 
-        writer.Close();
-        reader.Close();
-        socket.Close();
-        socketReady = false;
+        _writer.Close();
+        _reader.Close();
+        _socket.Close();
+        _socketReady = false;
     }
 }
 
 public class GameClient
 {
-    public string name;
-    public bool isHost;
+    public string Name;
+    public bool IsHost;
 }

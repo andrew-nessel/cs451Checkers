@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44824535, g: 0.49827206, b: 0.5755818, a: 1}
+  m_IndirectSpecularColor: {r: 0.44824475, g: 0.49827188, b: 0.5755814, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -446,11 +446,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0a4ca1e576344b4e956e7142e6fff90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  whitePiece: {fileID: 1030010244615322, guid: e6fc36561eeec4943ba9bb199f9a43ca, type: 2}
-  blackPiece: {fileID: 1185841007980998, guid: 1ce31a002a031bf4781870d0ee9c1930, type: 2}
-  whiteKing: {fileID: 1129975795150500, guid: 4f8bfd8733f958347a3505e5eaebce40, type: 2}
-  blackKing: {fileID: 1700226786713118, guid: 695f29fddf48a6f46a6a7fe8dbb8fcde, type: 2}
-  pieces:
+  WhitePiece: {fileID: 1030010244615322, guid: e6fc36561eeec4943ba9bb199f9a43ca, type: 2}
+  BlackPiece: {fileID: 1185841007980998, guid: 1ce31a002a031bf4781870d0ee9c1930, type: 2}
+  WhiteKing: {fileID: 1129975795150500, guid: 4f8bfd8733f958347a3505e5eaebce40, type: 2}
+  BlackKing: {fileID: 1700226786713118, guid: 695f29fddf48a6f46a6a7fe8dbb8fcde, type: 2}
+  Pieces:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -475,7 +475,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  turnText: {fileID: 29987187}
+  TurnText: {fileID: 29987187}
 --- !u!65 &1376735647
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -499,8 +499,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02ff4aa162b7adc49ac87f998ddf571b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  checkBoard: {fileID: 0}
-  waitForJump: 0
+  CheckBoard: {fileID: 0}
+  WaitForJump: 0
 --- !u!1 &1461060454
 GameObject:
   m_ObjectHideFlags: 0
