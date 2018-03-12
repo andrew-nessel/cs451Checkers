@@ -26,7 +26,8 @@ public class checkerBoard : MonoBehaviour {
 
     void Start () {
         _currentTurn = 1;
-        _gameLogic = GetComponent<GameLogic>();
+        _gameLogic = new GameLogic();
+        _gameLogic.Start(this);
         GenerateBoard();
         Instance = this;
         _client = FindObjectOfType<Client>();

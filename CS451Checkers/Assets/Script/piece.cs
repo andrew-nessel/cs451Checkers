@@ -1,4 +1,9 @@
-﻿public class Piece {
+﻿
+/*
+ * This classes acts as a container for the logical pieces used by the board. Holds a pieces identifier, its coordinates, etc.
+ */
+ 
+public class Piece {
 
     protected int Id;
     protected bool White;
@@ -67,14 +72,4 @@
         Captured = true;
     }
 
-
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

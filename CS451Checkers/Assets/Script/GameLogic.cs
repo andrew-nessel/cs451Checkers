@@ -1,16 +1,25 @@
 ﻿using UnityEngine;
 
-public class GameLogic : MonoBehaviour {
+/*
+ * This classes provides the logic utilies needed to play a checkers game. This class sets up a board of pieces and then determines whether moves are valid, performs the logic of executing moves, etc.
+ */
+
+public class GameLogic {
     
     private Piece[][] _myBoard;
     private Piece[] _pieceList;
     public checkerBoard CheckBoard;
     public bool WaitForJump;
 
-    private void InitBoard()
+    public void Start(checkerBoard check)
+    {
+        CheckBoard = check;
+    }
+
+    //Used to initialize the board to the starting position
+    public void InitBoard()
     {
 
-        CheckBoard = GetComponent<checkerBoard>();
         _myBoard = new Piece[8][];
         _pieceList = new Piece[24];
         WaitForJump = false;
@@ -72,6 +81,7 @@ public class GameLogic : MonoBehaviour {
         
     }
 
+    //Used to select a piece by the position on the board
     public Piece SelectPiece(int x, int y)
     {
         if (x < 0 || x >= 8 || y < 0 || y >= 8)
@@ -80,6 +90,7 @@ public class GameLogic : MonoBehaviour {
         return _myBoard[x][y];
     }
 
+    //tell whether a move is valid or not
     public bool ValidMove(Move move)
     {
 
@@ -146,6 +157,7 @@ public class GameLogic : MonoBehaviour {
         return true;
     }
 
+    //given a valid move, applies the move to the board
     public bool MakeMove(Move move)
     {
         Piece piece = move.GetPiece();
@@ -258,11 +270,13 @@ public class GameLogic : MonoBehaviour {
         return true;
     }
 
+    //returns the current board
     public Piece[][] GetBoard()
     {
         return _myBoard;
     }
 
+    //returns a piece based on id
     public Piece GetPiece(int id)
     {
         if(id > 23 || id < 0)
@@ -273,6 +287,7 @@ public class GameLogic : MonoBehaviour {
         return _pieceList[id];
     }
 
+    //checks if win conditions are met
     public void CheckWin()
     {
 
@@ -310,7 +325,8 @@ public class GameLogic : MonoBehaviour {
         }
     }
 
-    public bool CanJump(Piece piece) //not finished
+    //determines whether or not a piece has an available jump
+    public bool CanJump(Piece piece)
     {
         int x1 = piece.GetX();
         int y1 = piece.GetY();
@@ -348,7 +364,8 @@ public class GameLogic : MonoBehaviour {
         return false;
     }
 
-    public bool CanJumpNext(Move move) //this only takes jumps that are single jumps
+    //takes a single length jump and determines if it is valid
+    public bool CanJumpNext(Move move)
     {
         Piece piece = move.GetPiece();
         int x1 = move.GetStartX();
@@ -414,22 +431,33 @@ public class GameLogic : MonoBehaviour {
         }
     }
 
+    //returns whether the board is frozen waiting for double jump input
     public bool WaitingForJump()
     {
         return WaitForJump;
     }
-    
 
-    // Use this for initialization
-    void Start()
+
+    //set the board with provided pieces (used mainly for testing)
+    public void SetBoard(Piece[] pList)
     {
-        InitBoard();
-    }
+        _myBoard = new Piece[8][];
 
-    // Update is called once per frame
-    void Update()
-    {
+        for(int x = 0; x < 8; x++)
+        {
+            _myBoard[x] = new Piece[8];
+        }
 
+        _pieceList = new Piece[pList.Length];
+
+        int z = 0;
+
+        foreach(Piece piece in pList)
+        {
+            _myBoard[piece.GetX()][piece.GetY()] = piece;
+            _pieceList[z] = piece;
+            z++;
+        }
     }
 
 

@@ -1,4 +1,9 @@
-﻿public class Move {
+﻿
+/*
+ * This classes acts as a container for the logical moves used by the board. Holds a piece, the piece's current position and where it intends to move
+ */
+
+public class Move {
 
     private Piece movePiece;
     private int startX;
